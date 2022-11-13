@@ -1,4 +1,4 @@
-package com.kyu0.jungo.system.config;
+package com.kyu0.jungo.system;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
