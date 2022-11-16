@@ -50,4 +50,12 @@ public class Member {
                     .build();
         }
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class LoginRequest {
+        private String id;
+        private String password;
+    }
 }
