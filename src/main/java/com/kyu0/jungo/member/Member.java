@@ -1,9 +1,12 @@
 package com.kyu0.jungo.member;
 
 import java.beans.Transient;
+import java.util.Collection;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+
+import org.springframework.security.core.GrantedAuthority;
 
 import com.kyu0.jungo.member.authority.MemberAuthority;
 
@@ -57,5 +60,21 @@ public class Member {
     public static class LoginRequest {
         private String id;
         private String password;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class LoginResponse {
+        private String id;
+        private String password;
+        private Collection<? extends GrantedAuthority> authority;
+
+        @Builder
+        public LoginResponse (String id, String password, Collection<? extends GrantedAuthority> authority) {
+            this.id = id;
+            this.password = password;
+            this.authority = authority;
+        }
     }
 }

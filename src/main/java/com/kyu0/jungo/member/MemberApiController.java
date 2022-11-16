@@ -1,6 +1,5 @@
 package com.kyu0.jungo.member;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +23,8 @@ public class MemberApiController {
 
     @PostMapping("/api/login")
     public String login(@RequestBody Member.LoginRequest requestDto) {
-        UserDetails userDetails = memberService.loadUserByUsername(requestDto.getId());
-        return jwtProvider.generateToken(userDetails.getUsername(), userDetails.getAuthorities());
+        Member.LoginResponse responseDto = memberService.authenticateByIdAndPassword(requestDto);
+        
+        return jwtProvider.generateToken(responseDto.getId(), responseDto.getAuthority());
     }
 }
