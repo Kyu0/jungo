@@ -13,7 +13,7 @@ public class MemberApiController {
     }
 
     @PostMapping("/api/member")
-    public void save(@RequestBody Member.SaveRequest member) {
-        memberService.save(member);
+    public void save(@RequestBody Member.SaveRequest requestDto) {
+        memberService.save(requestDto);
     }
 }

@@ -17,10 +17,10 @@ public class MemberService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void save(Member.SaveRequest member) {
-        member.setPassword(passwordEncoder.encode(member.getPassword()));
+    public void save(Member.SaveRequest requestDto) {
+        requestDto.setPassword(passwordEncoder.encode(requestDto.getPassword()));
 
-        memberRepository.save(member.toEntity());
+        memberRepository.save(requestDto.toEntity());
     }
 
     @Override
