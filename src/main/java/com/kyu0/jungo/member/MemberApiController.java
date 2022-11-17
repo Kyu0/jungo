@@ -1,10 +1,10 @@
 package com.kyu0.jungo.member;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.kyu0.jungo.system.auth.JwtProvider;
+import com.kyu0.jungo.util.ApiUtils;
+import com.kyu0.jungo.util.ApiUtils.*;
 
 @RestController
 public class MemberApiController {
@@ -22,9 +22,9 @@ public class MemberApiController {
     }
 
     @PostMapping("/api/login")
-    public String login(@RequestBody Member.LoginRequest requestDto) {
+    public ApiResult<String> login(@RequestBody Member.LoginRequest requestDto) {
         Member.LoginResponse responseDto = memberService.authenticateByIdAndPassword(requestDto);
         
-        return jwtProvider.generateToken(responseDto.getId(), responseDto.getAuthority());
+        return ApiUtils.success(jwtProvider.generateToken(responseDto.getId(), responseDto.getAuthority()));
     }
 }
