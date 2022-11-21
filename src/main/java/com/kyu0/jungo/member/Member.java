@@ -8,7 +8,7 @@ import javax.persistence.Id;
 
 import org.springframework.security.core.GrantedAuthority;
 
-import com.kyu0.jungo.member.authority.MemberAuthority;
+import com.kyu0.jungo.member.role.MemberRole;
 
 import lombok.*;
 
@@ -24,13 +24,13 @@ public class Member {
     @Id
     private String id;
     private String password;
-    private MemberAuthority authority;
+    private MemberRole role;
 
     @Builder
-    public Member(String id, String password, MemberAuthority authority) {
+    public Member(String id, String password, MemberRole role) {
         this.id = id;
         this.password = password;
-        this.authority = authority;
+        this.role = role;
     }
 
     /**
@@ -42,14 +42,14 @@ public class Member {
     public static class SaveRequest {
         private String id;
         private String password;
-        private MemberAuthority authority;
+        private MemberRole role;
 
         @Transient
         public Member toEntity() {
             return Member.builder()
                         .id(this.id)
                         .password(this.password)
-                        .authority(this.authority)
+                        .role(this.role)
                     .build();
         }
     }
@@ -68,13 +68,13 @@ public class Member {
     public static class LoginResponse {
         private String id;
         private String password;
-        private Collection<? extends GrantedAuthority> authority;
+        private Collection<? extends GrantedAuthority> role;
 
         @Builder
-        public LoginResponse (String id, String password, Collection<? extends GrantedAuthority> authority) {
+        public LoginResponse (String id, String password, Collection<? extends GrantedAuthority> role) {
             this.id = id;
             this.password = password;
-            this.authority = authority;
+            this.role = role;
         }
     }
 }

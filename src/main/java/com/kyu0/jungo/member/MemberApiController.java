@@ -25,6 +25,6 @@ public class MemberApiController {
     public ApiResult<String> login(@RequestBody Member.LoginRequest requestDto) {
         Member.LoginResponse responseDto = memberService.authenticateByIdAndPassword(requestDto);
         
-        return ApiUtils.success(jwtProvider.generateToken(responseDto.getId(), responseDto.getAuthority()));
+        return ApiUtils.success(jwtProvider.generateToken(responseDto.getId(), responseDto.getRole()));
     }
 }

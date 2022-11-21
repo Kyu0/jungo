@@ -33,19 +33,36 @@ public class JwtProvider {
         this.EXPIRE_TIME = expireTime;
     }
 
+    /**
+     * Authentication 기반 토큰 생성 메소드.
+     * {@link #generateToken(String, Collection)}
+     * @param authentication
+     * @return JWT(String)
+     */
     public String generateToken(Authentication authentication) {
         return generateToken(authentication.getName(), authentication.getAuthorities());
     }
 
+    /**
+     * Username 및 Authorities 기반 토큰 생성 메소드.
+     * @param username
+     * @param authorities
+     * @return JWT(String)
+     */
     public String generateToken(String username, Collection<? extends GrantedAuthority> authorities) {
         return Jwts.builder()
             .setSubject(username)
-            .claim("authority", authorities.stream().findFirst().get().toString())
+            .claim("role", authorities.stream().findFirst().get().toString())
             .setExpiration(getExpireDate())
             .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
         .compact();
     }
 
+    /**
+     * 
+     * @param accessToken
+     * @return Authentication
+     */
     public Authentication getAuthentication(String accessToken) {
         UserDetails userDetails = memberService.loadUserByUsername(getUsername(accessToken));
 

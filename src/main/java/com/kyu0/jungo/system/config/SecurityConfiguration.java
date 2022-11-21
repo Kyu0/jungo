@@ -7,6 +7,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.kyu0.jungo.system.auth.AuthenticationAccessDeniedHandler;
+import com.kyu0.jungo.system.auth.EntryPointUnauthorizedHandler;
 import com.kyu0.jungo.system.auth.JwtFilter;
 import com.kyu0.jungo.system.auth.JwtProvider;
 
@@ -14,9 +16,13 @@ import com.kyu0.jungo.system.auth.JwtProvider;
 public class SecurityConfiguration {
 
     private final JwtProvider jwtProvider;
+    private final AuthenticationAccessDeniedHandler accessDeniedhandler;
+    private final EntryPointUnauthorizedHandler unauthorizedHandler;
 
-    public SecurityConfiguration(JwtProvider jwtProvider) {
+    public SecurityConfiguration(JwtProvider jwtProvider, AuthenticationAccessDeniedHandler accessDeniedHandler, EntryPointUnauthorizedHandler unauthorizedHandler) {
         this.jwtProvider = jwtProvider;
+        this.accessDeniedhandler = accessDeniedHandler;
+        this.unauthorizedHandler = unauthorizedHandler;
     }
 
     @Bean
@@ -32,9 +38,12 @@ public class SecurityConfiguration {
             .anyRequest().permitAll();
 
         httpSecurity
-            .formLogin()
-                .loginPage("/login")
+            .exceptionHandling()
+                .accessDeniedHandler(accessDeniedhandler)
+                .authenticationEntryPoint(unauthorizedHandler)
                 .and()
+            .formLogin()
+                .disable()
             .httpBasic()
                 .disable()
             .csrf()

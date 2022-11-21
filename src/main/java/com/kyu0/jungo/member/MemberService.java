@@ -1,15 +1,13 @@
 package com.kyu0.jungo.member;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 
 @Service
 public class MemberService implements UserDetailsService {
@@ -45,13 +43,10 @@ public class MemberService implements UserDetailsService {
             throw new BadCredentialsException("비밀번호가 잘못되었습니다.");
         }
 
-        List<GrantedAuthority> authority = new ArrayList<>();
-        authority.add(new SimpleGrantedAuthority(member.getAuthority().getName()));
-        
         return Member.LoginResponse.builder()
             .id(member.getId())
             .password(member.getPassword())
-            .authority(authority)
+            .role(createAuthorityList(member.getRole().getName()))
         .build();
     }
 
@@ -59,7 +54,7 @@ public class MemberService implements UserDetailsService {
         return User.builder()
             .username(member.getId())
             .password(member.getPassword())
-            .authorities(new SimpleGrantedAuthority(member.getAuthority().getName()))
+            .authorities(new SimpleGrantedAuthority(member.getRole().getName()))
         .build();
     }
 }
