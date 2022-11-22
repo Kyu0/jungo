@@ -1,16 +1,14 @@
 package com.kyu0.jungo.member;
 
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 
 @Service
-public class MemberService implements UserDetailsService {
+public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -24,15 +22,6 @@ public class MemberService implements UserDetailsService {
         requestDto.setPassword(passwordEncoder.encode(requestDto.getPassword()));
 
         memberRepository.save(requestDto.toEntity());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, BadCredentialsException {
-        Member member = memberRepository.findById(username)
-            .orElseThrow(() -> new UsernameNotFoundException("username"));
-    
-        return toUserDetails(member);
     }
 
     public Member.LoginResponse authenticateByIdAndPassword(Member.LoginRequest requestDto) {
@@ -50,11 +39,4 @@ public class MemberService implements UserDetailsService {
         .build();
     }
 
-    private UserDetails toUserDetails(Member member) {
-        return User.builder()
-            .username(member.getId())
-            .password(member.getPassword())
-            .authorities(new SimpleGrantedAuthority(member.getRole().getName()))
-        .build();
-    }
 }

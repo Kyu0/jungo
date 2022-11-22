@@ -1,34 +1,31 @@
 package com.kyu0.jungo.system.auth;
 
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.*;
 import org.springframework.stereotype.Component;
 
-import com.kyu0.jungo.member.MemberService;
+import io.jsonwebtoken.*;
+import lombok.extern.log4j.Log4j2;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 
+
+@Log4j2
 @PropertySource("security.properties")
 @Component
 public class JwtProvider {
     
-    private final MemberService memberService;
     private final String SECRET_KEY;
     private final long EXPIRE_TIME;
 
     // 생성자 메소드
-    public JwtProvider(MemberService memberService, @Value("${jwt.token.secret-key}") String secretKey, @Value("${jwt.token.expire-time}") long expireTime) {
-        this.memberService = memberService;
+    public JwtProvider(@Value("${jwt.token.secret-key}") String secretKey, @Value("${jwt.token.expire-time}") long expireTime) {
         this.SECRET_KEY = secretKey;
         this.EXPIRE_TIME = expireTime;
     }
@@ -59,16 +56,19 @@ public class JwtProvider {
     }
 
     /**
-     * 
+     * 토큰으로부터 받은 정보를 기반으로 Authentication 객체를 반환하는 메소드.
      * @param accessToken
      * @return Authentication
      */
     public Authentication getAuthentication(String accessToken) {
-        UserDetails userDetails = memberService.loadUserByUsername(getUsername(accessToken));
-
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(getUsername(accessToken), "", createAuthorityList(getRole(accessToken)));
     }
 
+    /**
+     * 사용자가 보낸 요청 헤더의 'Authorization' 필드에서 토큰을 추출하는 메소드.
+     * @param request
+     * @return token(String)
+     */
     public String resolveToken(HttpServletRequest request) {
         return request.getHeader("Authorization");
     }
@@ -97,6 +97,17 @@ public class JwtProvider {
             .parseClaimsJws(accessToken)
             .getBody()
             .getSubject();
+    }
+
+    private String getRole(String accessToken) {
+        String role = Jwts.parser()
+            .setSigningKey(SECRET_KEY)
+            .parseClaimsJws(accessToken)
+            .getBody()
+            .get("role", String.class);
+
+            log.info(role);
+        return role;
     }
 
     private Date getExpireDate() {

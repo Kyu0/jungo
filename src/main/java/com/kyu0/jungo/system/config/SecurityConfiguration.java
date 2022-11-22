@@ -7,19 +7,17 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.kyu0.jungo.system.auth.AuthenticationAccessDeniedHandler;
-import com.kyu0.jungo.system.auth.EntryPointUnauthorizedHandler;
-import com.kyu0.jungo.system.auth.JwtFilter;
-import com.kyu0.jungo.system.auth.JwtProvider;
+import com.kyu0.jungo.member.role.MemberRole;
+import com.kyu0.jungo.system.auth.*;
 
 @Configuration
 public class SecurityConfiguration {
 
     private final JwtProvider jwtProvider;
-    private final AuthenticationAccessDeniedHandler accessDeniedhandler;
+    private final CustomAccessDeniedHandler accessDeniedhandler;
     private final EntryPointUnauthorizedHandler unauthorizedHandler;
 
-    public SecurityConfiguration(JwtProvider jwtProvider, AuthenticationAccessDeniedHandler accessDeniedHandler, EntryPointUnauthorizedHandler unauthorizedHandler) {
+    public SecurityConfiguration(JwtProvider jwtProvider, CustomAccessDeniedHandler accessDeniedHandler, EntryPointUnauthorizedHandler unauthorizedHandler) {
         this.jwtProvider = jwtProvider;
         this.accessDeniedhandler = accessDeniedHandler;
         this.unauthorizedHandler = unauthorizedHandler;
@@ -28,6 +26,10 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+            .exceptionHandling()
+                .accessDeniedHandler(accessDeniedhandler)
+                .authenticationEntryPoint(unauthorizedHandler)
+                .and()
             .addFilterBefore(new JwtFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -35,13 +37,11 @@ public class SecurityConfiguration {
         httpSecurity
             .authorizeRequests() // 요청에 대한 권한 설정
             .antMatchers("/").authenticated()
+            .antMatchers("/test/user").hasRole(MemberRole.ROLE_USER.getNameWithoutPrefix())
+            .antMatchers("/test/admin").hasRole(MemberRole.ROLE_ADMIN.getNameWithoutPrefix())
             .anyRequest().permitAll();
 
         httpSecurity
-            .exceptionHandling()
-                .accessDeniedHandler(accessDeniedhandler)
-                .authenticationEntryPoint(unauthorizedHandler)
-                .and()
             .formLogin()
                 .disable()
             .httpBasic()

@@ -15,7 +15,7 @@ import com.kyu0.jungo.util.ApiUtils;
 import com.kyu0.jungo.util.FormatConverter;
 
 @Component
-public class AuthenticationAccessDeniedHandler implements AccessDeniedHandler {
+public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,

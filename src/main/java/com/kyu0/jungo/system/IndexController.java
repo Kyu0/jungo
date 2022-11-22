@@ -20,4 +20,14 @@ public class IndexController {
     public String register() {
         return "register";
     }
+
+    @GetMapping("/test/user")
+    public String testUser() {
+        return "test_user";
+    }
+
+    @GetMapping("/test/admin")
+    public String testAdmin() {
+        return "test_admin";
+    }
 }
