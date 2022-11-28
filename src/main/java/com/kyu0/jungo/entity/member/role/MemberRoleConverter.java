@@ -1,9 +1,8 @@
-package com.kyu0.jungo.member.role;
+package com.kyu0.jungo.entity.member.role;
 
 import java.util.stream.Stream;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import javax.persistence.*;
 
 @Converter(autoApply = true)
 public class MemberRoleConverter implements AttributeConverter<MemberRole, String> {

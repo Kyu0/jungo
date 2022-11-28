@@ -1,4 +1,4 @@
-package com.kyu0.jungo.member;
+package com.kyu0.jungo.entity.member;
 
 import java.beans.Transient;
 import java.util.Collection;
@@ -8,7 +8,7 @@ import javax.persistence.Id;
 
 import org.springframework.security.core.GrantedAuthority;
 
-import com.kyu0.jungo.member.role.MemberRole;
+import com.kyu0.jungo.entity.member.role.MemberRole;
 
 import lombok.*;
 

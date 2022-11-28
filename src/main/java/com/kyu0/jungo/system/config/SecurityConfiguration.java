@@ -7,7 +7,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.kyu0.jungo.member.role.MemberRole;
+import com.kyu0.jungo.entity.member.role.MemberRole;
 import com.kyu0.jungo.system.auth.*;
 
 @Configuration

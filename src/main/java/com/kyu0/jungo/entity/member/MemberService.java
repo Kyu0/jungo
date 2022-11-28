@@ -1,4 +1,4 @@
-package com.kyu0.jungo.member;
+package com.kyu0.jungo.entity.member;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.*;
