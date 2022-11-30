@@ -1,4 +1,4 @@
-package com.kyu0.jungo.entity;
+package com.kyu0.jungo.rest;
 
 import java.time.LocalDateTime;
 

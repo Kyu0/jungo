@@ -1,14 +1,14 @@
-package com.kyu0.jungo.entity.post;
+package com.kyu0.jungo.rest.post;
 
 import java.util.List;
 
 import javax.persistence.*;
 
-import com.kyu0.jungo.entity.BaseTimeEntity;
-import com.kyu0.jungo.entity.comment.Comment;
-import com.kyu0.jungo.entity.media.Attach;
-import com.kyu0.jungo.entity.member.Member;
-import com.kyu0.jungo.entity.postcategory.PostCategory;
+import com.kyu0.jungo.rest.BaseTimeEntity;
+import com.kyu0.jungo.rest.comment.Comment;
+import com.kyu0.jungo.rest.media.Attach;
+import com.kyu0.jungo.rest.member.Member;
+import com.kyu0.jungo.rest.postcategory.PostCategory;
 
 import lombok.*;
 

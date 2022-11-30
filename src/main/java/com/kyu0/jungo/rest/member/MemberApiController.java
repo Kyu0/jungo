@@ -1,4 +1,4 @@
-package com.kyu0.jungo.entity.member;
+package com.kyu0.jungo.rest.member;
 
 import org.springframework.web.bind.annotation.*;
 

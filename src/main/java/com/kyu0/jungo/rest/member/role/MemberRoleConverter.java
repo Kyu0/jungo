@@ -1,4 +1,4 @@
-package com.kyu0.jungo.entity.member.role;
+package com.kyu0.jungo.rest.member.role;
 
 import java.util.stream.Stream;
 

@@ -1,8 +1,8 @@
-package com.kyu0.jungo.entity.media;
+package com.kyu0.jungo.rest.media;
 
 import javax.persistence.*;
 
-import com.kyu0.jungo.entity.post.Post;
+import com.kyu0.jungo.rest.post.Post;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.kyu0.jungo.entity.member.role;
+package com.kyu0.jungo.rest.member.role;
 
 public enum MemberRole {
     ROLE_USER("ROLE_USER"), ROLE_ADMIN("ROLE_ADMIN");

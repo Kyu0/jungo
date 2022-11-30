@@ -1,10 +1,10 @@
-package com.kyu0.jungo.entity.comment;
+package com.kyu0.jungo.rest.comment;
 
 import javax.persistence.*;
 
-import com.kyu0.jungo.entity.BaseTimeEntity;
-import com.kyu0.jungo.entity.member.Member;
-import com.kyu0.jungo.entity.post.Post;
+import com.kyu0.jungo.rest.BaseTimeEntity;
+import com.kyu0.jungo.rest.member.Member;
+import com.kyu0.jungo.rest.post.Post;
 
 import lombok.*;
 
