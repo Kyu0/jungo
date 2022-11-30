@@ -1,7 +1,7 @@
 package com.kyu0.jungo.rest.postcategory;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -42,11 +42,23 @@ public class PostCategoryApiController {
 
     @PutMapping("/api/post-category")
     public ApiResult<?> modify(@RequestBody PostCategory.ModifyRequest requestDto) {
-        return ApiUtils.success(postCategoryService.modify(requestDto));
+        try {
+            return ApiUtils.success(postCategoryService.modify(requestDto));
+        }
+        catch (ValidationException | EntityNotFoundException e) {
+            log.error(e.getMessage());
+            return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/api/post-category/{id}")
     public ApiResult<?> delete(@PathVariable Integer id) {
-        return ApiUtils.success(postCategoryService.delete(id));
+        try {
+            return ApiUtils.success(postCategoryService.delete(id));
+        }
+        catch (EntityNotFoundException e) {
+            log.error(e.getMessage());
+            return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

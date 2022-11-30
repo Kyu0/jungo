@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.springframework.stereotype.Service;
@@ -32,11 +33,7 @@ public class PostCategoryService {
     public PostCategory modify(PostCategory.ModifyRequest requestDto) {
         PostCategory category = postCategoryRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE));
 
-        return postCategoryRepository.save(PostCategory.builder()
-            .id(category.getId())
-            .name(requestDto.getName())
-            .posts(category.getPosts())
-        .build());
+        return postCategoryRepository.save(requestDto.toEntity(category));
     }
 
     public boolean delete(Integer id) {

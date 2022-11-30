@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Length;
 
 import com.kyu0.jungo.rest.post.Post;
 
@@ -28,7 +25,7 @@ public class PostCategory {
 
     @NotBlank(message = "카테고리의 이름을 지정해주세요.")
     @Size(max = 10, message = "카테고리의 이름은 10자 이하여야 합니다.")
-    @Column(length = 10)
+    @Column(length = 10, nullable = false)
     private String name;
 
     @OneToMany
@@ -60,5 +57,9 @@ public class PostCategory {
     public static class ModifyRequest {
         private int id;
         private String name;
+
+        public @Valid PostCategory toEntity(PostCategory category) {
+            return new PostCategory(category.id, this.name, category.posts);
+        }
     }
 }

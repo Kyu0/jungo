@@ -24,6 +24,7 @@ import java.util.Optional;
 import javax.validation.ValidationException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kyu0.jungo.rest.postcategory.PostCategory.ModifyRequest;
 import com.kyu0.jungo.rest.postcategory.PostCategory.SaveRequest;
 
 @WebMvcTest(PostCategoryApiController.class)
@@ -154,7 +155,7 @@ public class PostCategoryTest {
 
     @Test
     @WithMockUser(roles = {"USER"})
-    public void 카테고리_조회_테스트2() throws Exception {
+    public void 카테고리_조회_테스트_2() throws Exception {
         // given
         when(postCategoryService.findAll())
             .thenReturn(new ArrayList<>());
@@ -171,5 +172,61 @@ public class PostCategoryTest {
         .andDo(print());
 
         verify(postCategoryService).findAll();
+    }
+
+    @Test
+    @WithMockUser(roles = {"ADMIN"})
+    public void 카테고리_수정_테스트_1() throws Exception {
+        final int TEST_ID = 1;
+        final String MODIFIED_NAME = "수정했어요";
+        final ModifyRequest REQUEST_DTO = new ModifyRequest(TEST_ID, MODIFIED_NAME);
+        final PostCategory RESULT = new PostCategory(TEST_ID, MODIFIED_NAME, new ArrayList<>());
+
+        // given
+        when(postCategoryService.modify(refEq(REQUEST_DTO)))
+            .thenReturn(RESULT);
+
+        // when
+        mockMvc.perform(put(URL)
+            .content(mapper.writeValueAsString(REQUEST_DTO))
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON))
+
+        /** then
+         * 성공
+         */
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.response.id").value(TEST_ID))
+        .andExpect(jsonPath("$.response.name").value(MODIFIED_NAME))
+        .andDo(print());
+
+        verify(postCategoryService).modify(refEq(REQUEST_DTO));
+    }
+
+    @Test
+    @WithMockUser(roles = {"ADMIN"})
+    public void 카테고리_수정_테스트_2() throws Exception {
+        final int TEST_ID = 1;
+        final String MODIFIED_NAME = "수정했어요98273";
+        final ModifyRequest REQUEST_DTO = new ModifyRequest(TEST_ID, MODIFIED_NAME);
+        
+        // given
+        when(postCategoryService.modify(refEq(REQUEST_DTO)))
+            .thenThrow(new ValidationException("카테고리의 이름은 10자 이하로 입력해주세요."));
+
+        // when
+        mockMvc.perform(put(URL)
+            .content(mapper.writeValueAsString(REQUEST_DTO))
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON))
+
+        /** then
+         * 
+         */
+        .andExpect(jsonPath("$.success").value(false))
+        .andExpect(jsonPath("$.response").doesNotExist())
+        .andDo(print());
+
+        verify(postCategoryService).modify(refEq(REQUEST_DTO));
     }
 }
