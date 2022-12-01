@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.springframework.stereotype.Service;
@@ -30,13 +29,13 @@ public class PostCategoryService {
         return postCategoryRepository.save(requestDto.toEntity());
     }
 
-    public PostCategory modify(PostCategory.ModifyRequest requestDto) {
+    public PostCategory modify(PostCategory.ModifyRequest requestDto) throws ValidationException, EntityNotFoundException {
         PostCategory category = postCategoryRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE));
 
         return postCategoryRepository.save(requestDto.toEntity(category));
     }
 
-    public boolean delete(Integer id) {
+    public boolean delete(Integer id) throws EntityNotFoundException {
         PostCategory category = postCategoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE));
         
         postCategoryRepository.delete(category);

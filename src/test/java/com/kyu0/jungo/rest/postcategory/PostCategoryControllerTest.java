@@ -10,7 +10,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.refEq;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -28,7 +27,7 @@ import com.kyu0.jungo.rest.postcategory.PostCategory.ModifyRequest;
 import com.kyu0.jungo.rest.postcategory.PostCategory.SaveRequest;
 
 @WebMvcTest(PostCategoryApiController.class)
-public class PostCategoryTest {
+public class PostCategoryControllerTest {
     
     private final static String URL = "/api/post-category";
 
