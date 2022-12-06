@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 import com.kyu0.jungo.rest.BaseTimeEntity;
 import com.kyu0.jungo.rest.attach.Attach;
 import com.kyu0.jungo.rest.comment.Comment;
-import com.kyu0.jungo.rest.member.Member;
 import com.kyu0.jungo.rest.postcategory.PostCategory;
 
 import lombok.*;
@@ -44,9 +43,8 @@ public class Post extends BaseTimeEntity {
     private PostCategory category;
 
     @NotNull(message = "작성자의 id를 입력해주세요.")
-    @ManyToOne
     @JoinColumn(name = "MEMBER_ID", nullable = false)
-    private Member member;
+    private String memberId;
 
     @OneToMany
     @Builder.Default
@@ -70,14 +68,24 @@ public class Post extends BaseTimeEntity {
         private String content;
         private Integer categoryId;
 
-        public @Valid Post toEntity(Member member, PostCategory postCategory) {
+        public @Valid Post toEntity(PostCategory postCategory) {
             return Post.builder()
                 .title(title)
                 .content(content)
                 .viewCount(0)
+                .memberId(memberId)
                 .category(postCategory)
-                .member(member)
             .build();
         }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ModifyRequest {
+
+        private String title;
+        private String content;
     }
 }

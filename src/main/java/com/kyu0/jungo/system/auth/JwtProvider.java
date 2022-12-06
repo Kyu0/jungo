@@ -61,7 +61,6 @@ public class JwtProvider {
      * @return Authentication
      */
     public Authentication getAuthentication(String accessToken) {
-        System.out.println("asd");
         return new UsernamePasswordAuthenticationToken(getUsername(accessToken), "", createAuthorityList(getRole(accessToken)));
     }
 
@@ -106,8 +105,6 @@ public class JwtProvider {
             .parseClaimsJws(accessToken)
             .getBody()
             .get("role", String.class);
-
-            log.info(role);
         return role;
     }
 
