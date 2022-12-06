@@ -5,8 +5,8 @@ import java.util.List;
 import javax.persistence.*;
 
 import com.kyu0.jungo.rest.BaseTimeEntity;
+import com.kyu0.jungo.rest.attach.Attach;
 import com.kyu0.jungo.rest.comment.Comment;
-import com.kyu0.jungo.rest.media.Attach;
 import com.kyu0.jungo.rest.member.Member;
 import com.kyu0.jungo.rest.postcategory.PostCategory;
 
@@ -38,5 +38,5 @@ public class Post extends BaseTimeEntity {
     private List<Comment> comments;
 
     @OneToMany
-    private List<Attach> media;
+    private List<Attach> attaches;
 }

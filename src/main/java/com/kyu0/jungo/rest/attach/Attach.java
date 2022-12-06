@@ -1,4 +1,4 @@
-package com.kyu0.jungo.rest.media;
+package com.kyu0.jungo.rest.attach;
 
 import javax.persistence.*;
 
