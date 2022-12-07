@@ -8,6 +8,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.Length;
+
 import com.kyu0.jungo.rest.BaseTimeEntity;
 import com.kyu0.jungo.rest.attach.Attach;
 import com.kyu0.jungo.rest.comment.Comment;
@@ -27,11 +29,12 @@ public class Post extends BaseTimeEntity {
     private Long id;
 
     @NotBlank(message = "제목을 입력해주세요.")
-    @Column(nullable = false)
+    @Length(max = 64)
+    @Column(nullable = false, length = 64)
     private String title;
 
     @NotBlank(message = "게시물의 내용을 입력해주세요.")
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "VIEW_COUNT")
@@ -43,7 +46,7 @@ public class Post extends BaseTimeEntity {
     private PostCategory category;
 
     @NotNull(message = "작성자의 id를 입력해주세요.")
-    @JoinColumn(name = "MEMBER_ID", nullable = false)
+    @JoinColumn(name = "MEMBER_ID", nullable = false, updatable = false)
     private String memberId;
 
     @OneToMany
@@ -85,7 +88,22 @@ public class Post extends BaseTimeEntity {
     @AllArgsConstructor
     public static class ModifyRequest {
 
+        private Long id;
         private String title;
         private String content;
+        private Integer categoryId;
+
+        public @Valid Post toEntity(Post post, PostCategory category) {
+            return Post.builder()
+                .id(id)
+                .title(title)
+                .content(content)
+                .viewCount(post.getViewCount())
+                .category(category)
+                .memberId(post.getMemberId())
+                .comments(post.getComments())
+                .attaches(post.getAttaches())
+            .build();
+        }
     }
 }

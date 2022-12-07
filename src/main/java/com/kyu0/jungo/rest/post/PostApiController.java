@@ -38,18 +38,27 @@ public class PostApiController {
         }
     }
 
-    @PutMapping("/api/post/{id}")
-    public ApiResult<?> modify(@RequestBody Post.ModifyRequest requestDto) {
+    @LoginCheck
+    @PutMapping("/api/post")
+    public ApiResult<?> modify(@RequestBody Post.ModifyRequest requestDto, Authentication authentication) {
         try {
-            return null;
+            String memberId = (String)authentication.getPrincipal();
+            return ApiUtils.success(postService.modify(requestDto, memberId));
         }
-        catch (Exception e) {
-            return null;
+        catch (EntityNotFoundException | ValidationException e) {
+            return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
+    @LoginCheck
     @DeleteMapping("/api/post/{id}")
-    public ApiResult<?> delete(@PathVariable Long id) {
-        return null;
+    public ApiResult<?> delete(@PathVariable Long id, Authentication authentication) {
+        try {
+            String memberId = (String)authentication.getPrincipal();
+            return ApiUtils.success(postService.delete(id, memberId));
+        }
+        catch (EntityNotFoundException e) {
+            return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

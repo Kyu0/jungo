@@ -36,10 +36,13 @@ public class PostCategoryService {
     }
 
     public boolean delete(Integer id) throws EntityNotFoundException {
-        PostCategory category = postCategoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE));
-        
-        postCategoryRepository.delete(category);
+        if (postCategoryRepository.existsById(id)) {
+            postCategoryRepository.deleteById(id);
 
-        return postCategoryRepository.existsById(id);
+            return !postCategoryRepository.existsById(id);
+        }
+        else {
+            throw new EntityNotFoundException(NOT_FOUND_MESSAGE);
+        }
     }
 }
