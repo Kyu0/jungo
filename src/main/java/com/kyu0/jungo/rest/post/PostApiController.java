@@ -3,6 +3,7 @@ package com.kyu0.jungo.rest.post;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +22,19 @@ public class PostApiController {
     
     private final PostService postService;
 
+    @GetMapping("/api/post")
+    public ApiResult<?> findAll(Pageable pageable) {
+        return ApiUtils.success(postService.findAll(pageable));
+    }
+
     @GetMapping("/api/post/{id}")
     public ApiResult<?> findById(@PathVariable Long id) {
-        return null;
+        try {
+            return ApiUtils.success(postService.findById(id));
+        }
+        catch (EntityNotFoundException e) {
+            return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @LoginCheck

@@ -3,6 +3,8 @@ package com.kyu0.jungo.rest.post;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -51,5 +53,13 @@ public class PostService {
         postRepository.delete(post);
 
         return !postRepository.existsById(id);
+    }
+
+    public Post findById(Long id) {
+        return postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
+    }
+
+    public Page<Post> findAll(Pageable pageable) {
+        return postRepository.findAll(pageable);
     }
 }
