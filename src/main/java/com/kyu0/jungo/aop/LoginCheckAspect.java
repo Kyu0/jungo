@@ -28,6 +28,6 @@ public class LoginCheckAspect {
     private boolean isAnonymous(Authentication authentication) {
         return authentication.getAuthorities().stream()
             .map((authority) -> authority.getAuthority())
-            .anyMatch((authority) -> authority == "ROLE_ANONYMOUS");
+            .anyMatch((authority) -> authority.equals("ROLE_ANONYMOUS"));
     }
 }
