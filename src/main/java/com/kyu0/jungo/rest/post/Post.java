@@ -13,6 +13,7 @@ import org.hibernate.validator.constraints.Length;
 import com.kyu0.jungo.rest.BaseTimeEntity;
 import com.kyu0.jungo.rest.attach.Attach;
 import com.kyu0.jungo.rest.comment.Comment;
+import com.kyu0.jungo.rest.member.Member;
 import com.kyu0.jungo.rest.postcategory.PostCategory;
 
 import lombok.*;
@@ -47,7 +48,7 @@ public class Post extends BaseTimeEntity {
 
     @NotNull(message = "작성자의 id를 입력해주세요.")
     @JoinColumn(name = "MEMBER_ID", nullable = false, updatable = false)
-    private String memberId;
+    private Member member;
 
     @OneToMany
     @Builder.Default
@@ -56,6 +57,38 @@ public class Post extends BaseTimeEntity {
     @OneToMany
     @Builder.Default
     private List<Attach> attaches = new ArrayList<>();
+
+    public void setMember(Member member) {
+        this.member = member;
+
+        if (!member.getPosts().contains(this)) {
+            member.addPost(this);
+        }
+    }
+
+    public void setCategory(PostCategory category) {
+        this.category = category;
+
+        if (!category.getPosts().contains(this)) {
+            category.getPosts().add(this);
+        }
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+
+        if (comment.getPost() != this) {
+            comment.setPost(this);
+        }
+    }
+
+    public void addAttach(Attach attach) {
+        this.attaches.add(attach);
+
+        if (attach.getPost() != this) {
+            attach.setPost(this);
+        }
+    }
 
     /**
      * DTO 선언부
@@ -71,12 +104,12 @@ public class Post extends BaseTimeEntity {
         private String content;
         private Integer categoryId;
 
-        public @Valid Post toEntity(PostCategory postCategory) {
+        public @Valid Post toEntity(Member member, PostCategory postCategory) {
             return Post.builder()
                 .title(title)
                 .content(content)
                 .viewCount(0)
-                .memberId(memberId)
+                .member(member)
                 .category(postCategory)
             .build();
         }
@@ -100,7 +133,7 @@ public class Post extends BaseTimeEntity {
                 .content(content)
                 .viewCount(post.getViewCount())
                 .category(category)
-                .memberId(post.getMemberId())
+                .member(post.getMember())
                 .comments(post.getComments())
                 .attaches(post.getAttaches())
             .build();

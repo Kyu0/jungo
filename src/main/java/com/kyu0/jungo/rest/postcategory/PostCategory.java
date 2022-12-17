@@ -32,6 +32,13 @@ public class PostCategory {
     @Builder.Default
     private List<Post> posts = new ArrayList<>();
     
+    public void addPost(Post post) {
+        this.posts.add(post);
+
+        if (post.getCategory() != this) {
+            post.setCategory(this);
+        }
+    }
 
     /**
      * DTO 선언부

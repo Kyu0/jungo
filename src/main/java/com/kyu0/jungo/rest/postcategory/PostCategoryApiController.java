@@ -19,17 +19,17 @@ public class PostCategoryApiController {
     
     private final PostCategoryService postCategoryService;
 
-    @GetMapping("/api/post-category")
+    @GetMapping("/api/post-categories")
     public ApiResult<?> findAll() {
         return ApiUtils.success(postCategoryService.findAll());
     }
 
-    @GetMapping("/api/post-category/{id}")
+    @GetMapping("/api/post-categories/{id}")
     public ApiResult<?> findById(@PathVariable Integer id){
         return ApiUtils.success(postCategoryService.findById(id));
     }
 
-    @PostMapping("/api/post-category")
+    @PostMapping("/api/post-categories")
     public ApiResult<?> save(@RequestBody PostCategory.SaveRequest requestDto) {
         try {
             return ApiUtils.success(postCategoryService.save(requestDto));
@@ -40,7 +40,7 @@ public class PostCategoryApiController {
         }
     }
 
-    @PutMapping("/api/post-category")
+    @PutMapping("/api/post-categories")
     public ApiResult<?> modify(@RequestBody PostCategory.ModifyRequest requestDto) {
         try {
             return ApiUtils.success(postCategoryService.modify(requestDto));
@@ -51,7 +51,7 @@ public class PostCategoryApiController {
         }
     }
 
-    @DeleteMapping("/api/post-category/{id}")
+    @DeleteMapping("/api/post-categories/{id}")
     public ApiResult<?> delete(@PathVariable Integer id) {
         try {
             return ApiUtils.success(postCategoryService.delete(id));

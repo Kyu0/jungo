@@ -22,12 +22,12 @@ public class PostApiController {
     
     private final PostService postService;
 
-    @GetMapping("/api/post")
+    @GetMapping("/api/posts")
     public ApiResult<?> findAll(Pageable pageable) {
         return ApiUtils.success(postService.findAll(pageable));
     }
 
-    @GetMapping("/api/post/{id}")
+    @GetMapping("/api/posts/{id}")
     public ApiResult<?> findById(@PathVariable Long id) {
         try {
             return ApiUtils.success(postService.findById(id));
@@ -38,7 +38,7 @@ public class PostApiController {
     }
 
     @LoginCheck
-    @PostMapping("/api/post")
+    @PostMapping("/api/posts")
     public ApiResult<?> save(@RequestBody Post.SaveRequest requestDto, Authentication authentication) {
         try {
             requestDto.setMemberId((String)authentication.getPrincipal());
@@ -50,7 +50,7 @@ public class PostApiController {
     }
 
     @LoginCheck
-    @PutMapping("/api/post")
+    @PutMapping("/api/posts")
     public ApiResult<?> modify(@RequestBody Post.ModifyRequest requestDto, Authentication authentication) {
         try {
             String memberId = (String)authentication.getPrincipal();
@@ -62,7 +62,7 @@ public class PostApiController {
     }
 
     @LoginCheck
-    @DeleteMapping("/api/post/{id}")
+    @DeleteMapping("/api/posts/{id}")
     public ApiResult<?> delete(@PathVariable Long id, Authentication authentication) {
         try {
             String memberId = (String)authentication.getPrincipal();

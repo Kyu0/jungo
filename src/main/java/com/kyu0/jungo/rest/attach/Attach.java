@@ -24,4 +24,12 @@ public class Attach {
     @ManyToOne
     @JoinColumn(name = "POST_ID")
     private Post post;
+
+    public void setPost(Post post) {
+        this.post = post;
+        
+        if (!post.getAttaches().contains(this)) {
+            post.getAttaches().add(this);
+        }
+    }
 }

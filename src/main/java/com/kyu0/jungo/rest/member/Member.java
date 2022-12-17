@@ -1,21 +1,18 @@
 package com.kyu0.jungo.rest.member;
 
-import java.beans.Transient;
-import java.util.Collection;
+import java.util.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import org.springframework.security.core.GrantedAuthority;
 
 import com.kyu0.jungo.rest.member.role.MemberRole;
+import com.kyu0.jungo.rest.post.Post;
 
 import lombok.*;
 
-/**
- * 1. JPA 를 이용하기 위해 기본 생성자를 Lombok 으로 선언 (@NoArgsConstructor)
- * 2. 데이터베이스 테이블과 매핑되는 클래스임을 선언 (@Entity)
- */
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Entity(name = "MEMBER")
@@ -26,11 +23,15 @@ public class Member {
     private String password;
     private MemberRole role;
 
-    @Builder
-    public Member(String id, String password, MemberRole role) {
-        this.id = id;
-        this.password = password;
-        this.role = role;
+    @Builder.Default
+    private List<Post> posts = new ArrayList<>();
+
+    public void addPost(Post post) {
+        this.posts.add(post);
+
+        if (post.getMember() != this) {
+            post.setMember(this);
+        }
     }
 
     /**
@@ -44,7 +45,6 @@ public class Member {
         private String password;
         private MemberRole role;
 
-        @Transient
         public Member toEntity() {
             return Member.builder()
                         .id(this.id)

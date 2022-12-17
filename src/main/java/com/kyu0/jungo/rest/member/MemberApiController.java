@@ -16,7 +16,7 @@ public class MemberApiController {
         this.jwtProvider = jwtProvider;
     }
 
-    @PostMapping("/api/member")
+    @PostMapping("/api/members")
     public void save(@RequestBody Member.SaveRequest requestDto) {
         memberService.save(requestDto);
     }
