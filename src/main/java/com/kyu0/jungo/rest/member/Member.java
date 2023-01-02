@@ -23,6 +23,7 @@ public class Member {
     private String password;
     private MemberRole role;
 
+    @OneToMany
     @Builder.Default
     private List<Post> posts = new ArrayList<>();
 

@@ -30,11 +30,12 @@ public class PostService {
     private static final String MODIFY_NOT_ALLOWED = "해당 게시글을 수정할 권한이 없습니다.";
     private static final String DELETE_NOT_ALLOWED = "해당 게시글을 삭제할 권한이 없습니다.";
 
-    public Post save(Post.SaveRequest requestDto) throws ValidationException, EntityNotFoundException {
+    @Transactional
+    public Long save(Post.SaveRequest requestDto) throws ValidationException, EntityNotFoundException {
         PostCategory category = postCategoryRepository.findById(requestDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND));
         Member member = memberRepository.findById(requestDto.getMemberId()).orElseThrow(() -> new EntityNotFoundException(MEMBER_NOT_FOUND));
 
-        return postRepository.save(requestDto.toEntity(member, category));
+        return postRepository.save(requestDto.toEntity(member, category)).getId();
     }
 
     public Post modify(ModifyRequest requestDto, String memberId) throws EntityNotFoundException, AccessDeniedException {

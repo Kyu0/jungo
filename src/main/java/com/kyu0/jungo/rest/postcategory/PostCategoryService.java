@@ -1,12 +1,12 @@
 package com.kyu0.jungo.rest.postcategory;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AllArgsConstructor;
 
@@ -17,12 +17,13 @@ public class PostCategoryService {
     private final PostCategoryRepository postCategoryRepository;
     private static final String NOT_FOUND_MESSAGE = "해당 id를 가진 카테고리를 찾을 수 없습니다.";
 
+    @Transactional
     public List<PostCategory> findAll() {
         return postCategoryRepository.findAll();
     }
 
-    public Optional<PostCategory> findById(Integer id) {
-        return postCategoryRepository.findById(id);
+    public PostCategory findById(Integer id) {
+        return postCategoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE));
     }
 
     public PostCategory save(PostCategory.SaveRequest requestDto) throws ValidationException {

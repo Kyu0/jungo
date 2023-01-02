@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.kyu0.jungo.rest.BaseTimeEntity;
+import com.kyu0.jungo.rest.member.Member;
 import com.kyu0.jungo.rest.post.Post;
 
 import lombok.*;
@@ -26,8 +27,9 @@ public class Comment extends BaseTimeEntity {
     private String content;
 
     @NotBlank
-    @Column(name = "MEMBER_ID", nullable = false, updatable = false)
-    private String memberId;
+    @ManyToOne
+    @JoinColumn(name = "MEMBER_ID", nullable = false, updatable = false)
+    private Member member;
 
     @NotNull
     @ManyToOne
@@ -56,10 +58,10 @@ public class Comment extends BaseTimeEntity {
         private String memberId;
         private Long postId;
 
-        public @Valid Comment toEntity(Post post) {
+        public @Valid Comment toEntity(Member member, Post post) {
             return Comment.builder()
                 .content(content)
-                .memberId(memberId)
+                .member(member)
                 .post(post)
             .build();
         }
@@ -73,5 +75,21 @@ public class Comment extends BaseTimeEntity {
         private Long id;
         private String content;
         private String memberId;
+    }
+
+    @Getter
+    @Setter
+    public static class FindResponse {
+        private Long id;
+        private Long postId;
+        private String content;
+        private String memberId;
+
+        public FindResponse(Comment comment) {
+            this.id = comment.getId();
+            this.content = comment.getContent();
+            this.postId = comment.getPost().getId();
+            this.memberId = comment.getMember().getId();
+        }
     }
 }

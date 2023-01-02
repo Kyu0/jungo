@@ -1,7 +1,9 @@
 package com.kyu0.jungo.rest.post;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -47,6 +49,7 @@ public class Post extends BaseTimeEntity {
     private PostCategory category;
 
     @NotNull(message = "작성자의 id를 입력해주세요.")
+    @ManyToOne
     @JoinColumn(name = "MEMBER_ID", nullable = false, updatable = false)
     private Member member;
 
@@ -137,6 +140,52 @@ public class Post extends BaseTimeEntity {
                 .comments(post.getComments())
                 .attaches(post.getAttaches())
             .build();
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class FindResponse {
+        private Long id;
+        private String title;
+        private String content;
+        private Integer categoryId;
+        private int viewCount;
+        private String memberId;
+        private List<Comment.FindResponse> comments;
+        private LocalDateTime createdAt;
+        private LocalDateTime lastModifiedAt;
+
+        public FindResponse (Post post) {
+            this.id = post.getId();
+            this.title = post.getTitle();
+            this.content = post.getContent();
+            this.categoryId = post.getCategory().getId();
+            this.viewCount = post.getViewCount();
+            this.memberId = post.getMember().getId();
+            this.comments = post.getComments().stream().map(Comment.FindResponse::new)
+                .collect(Collectors.toUnmodifiableList());
+            this.createdAt = post.getCreatedAt();
+            this.lastModifiedAt = post.getLastModifiedAt();
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class FindAllResponse {
+        private Long id;
+        private String title;
+        private Integer categoryId;
+        private int viewCount;
+        private String memberId;
+        private LocalDateTime createdAt;
+        
+        public FindAllResponse (Post post) {
+            this.id = post.getId();
+            this.title = post.getTitle();
+            this.categoryId = post.getCategory().getId();
+            this.memberId = post.getMember().getId();
+            this.createdAt = post.getCreatedAt();
         }
     }
 }

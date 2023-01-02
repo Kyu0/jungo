@@ -1,7 +1,7 @@
 package com.kyu0.jungo.rest.postcategory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -62,11 +62,38 @@ public class PostCategory {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ModifyRequest {
-        private int id;
+        private Integer id;
         private String name;
 
         public @Valid PostCategory toEntity(PostCategory category) {
             return new PostCategory(category.id, this.name, category.posts);
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class FindResponse {
+        private Integer id;
+        private String name;
+        private List<Post.FindAllResponse> posts;
+
+        public FindResponse(PostCategory category) {
+            this.id = category.getId();
+            this.name = category.getName();
+            this.posts = category.getPosts().stream().map(Post.FindAllResponse::new)
+                .collect(Collectors.toUnmodifiableList());
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class FindAllResponse {
+        private Integer id;
+        private String name;
+
+        public FindAllResponse(PostCategory category) {
+            this.id = category.getId();
+            this.name = category.getName();
         }
     }
 }

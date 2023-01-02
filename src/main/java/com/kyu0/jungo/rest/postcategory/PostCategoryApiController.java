@@ -1,5 +1,7 @@
 package com.kyu0.jungo.rest.postcategory;
 
+import java.util.stream.Collectors;
+
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 
@@ -21,18 +23,21 @@ public class PostCategoryApiController {
 
     @GetMapping("/api/post-categories")
     public ApiResult<?> findAll() {
-        return ApiUtils.success(postCategoryService.findAll());
+        return ApiUtils.success(
+            postCategoryService.findAll().stream().map(PostCategory.FindAllResponse::new)
+            .collect(Collectors.toUnmodifiableList())
+        );
     }
 
     @GetMapping("/api/post-categories/{id}")
     public ApiResult<?> findById(@PathVariable Integer id){
-        return ApiUtils.success(postCategoryService.findById(id));
+        return ApiUtils.success(new PostCategory.FindResponse(postCategoryService.findById(id)));
     }
 
     @PostMapping("/api/post-categories")
     public ApiResult<?> save(@RequestBody PostCategory.SaveRequest requestDto) {
         try {
-            return ApiUtils.success(postCategoryService.save(requestDto));
+            return ApiUtils.success(postCategoryService.save(requestDto).getId());
         }
         catch (ValidationException e) {
             log.error(e.getMessage());
@@ -43,7 +48,7 @@ public class PostCategoryApiController {
     @PutMapping("/api/post-categories")
     public ApiResult<?> modify(@RequestBody PostCategory.ModifyRequest requestDto) {
         try {
-            return ApiUtils.success(postCategoryService.modify(requestDto));
+            return ApiUtils.success(new PostCategory.FindResponse(postCategoryService.modify(requestDto)));
         }
         catch (ValidationException | EntityNotFoundException e) {
             log.error(e.getMessage());

@@ -17,8 +17,8 @@ public class MemberApiController {
     }
 
     @PostMapping("/api/members")
-    public void save(@RequestBody Member.SaveRequest requestDto) {
-        memberService.save(requestDto);
+    public ApiResult<?> save(@RequestBody Member.SaveRequest requestDto) throws Exception {
+        return ApiUtils.success(memberService.save(requestDto).getId());
     }
 
     @PostMapping("/api/login")

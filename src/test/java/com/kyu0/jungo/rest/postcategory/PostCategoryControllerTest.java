@@ -19,7 +19,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import javax.validation.ValidationException;
 
@@ -65,7 +64,7 @@ public class PostCategoryControllerTest {
          */
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.success").value(true))
-        .andExpect(jsonPath("$.response.name").value(TEST_NAME))
+        .andExpect(jsonPath("$.response.id").value(1))
         .andDo(print());
 
         verify(postCategoryService).save(refEq(REQUEST_DTO));
@@ -136,7 +135,7 @@ public class PostCategoryControllerTest {
          * id : 1, name : test, posts : []
          */
         when(postCategoryService.findById(TEST_ID))
-            .thenReturn(Optional.of(new PostCategory(TEST_ID, "test", new ArrayList<>())));
+            .thenReturn(new PostCategory(TEST_ID, "test", new ArrayList<>()));
         
         // when
         mockMvc.perform(get(URL + '/' + TEST_ID))

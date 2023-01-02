@@ -3,7 +3,6 @@ package com.kyu0.jungo.rest.comment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,7 +28,7 @@ public class CommentApiController {
             String memberId = (String)authentication.getPrincipal();
             requestDto.setMemberId(memberId);
 
-            return ApiUtils.success(commentService.save(requestDto));
+            return ApiUtils.success(commentService.save(requestDto).getId());
         }
         catch (Exception e) {
             return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -43,7 +42,7 @@ public class CommentApiController {
             String memberId = (String)authentication.getPrincipal();
             requestDto.setMemberId(memberId);
 
-            return ApiUtils.success(commentService.modify(requestDto, memberId));
+            return ApiUtils.success(new Comment.FindResponse(commentService.modify(requestDto, memberId)));
         }
         catch (Exception e) {
             return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);

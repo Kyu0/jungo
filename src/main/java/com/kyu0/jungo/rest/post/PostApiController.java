@@ -1,5 +1,8 @@
 package com.kyu0.jungo.rest.post;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 
@@ -9,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.kyu0.jungo.aop.LoginCheck;
+import com.kyu0.jungo.rest.post.Post.FindAllResponse;
 import com.kyu0.jungo.util.ApiUtils;
 import com.kyu0.jungo.util.ApiUtils.ApiResult;
 
@@ -23,14 +27,19 @@ public class PostApiController {
     private final PostService postService;
 
     @GetMapping("/api/posts")
-    public ApiResult<?> findAll(Pageable pageable) {
-        return ApiUtils.success(postService.findAll(pageable));
+    public ApiResult<List<FindAllResponse>> findAll(Pageable pageable) {
+        return ApiUtils.success(
+            postService.findAll(pageable).stream().map(Post.FindAllResponse::new)
+            .collect(Collectors.toUnmodifiableList())
+        );
     }
 
     @GetMapping("/api/posts/{id}")
     public ApiResult<?> findById(@PathVariable Long id) {
         try {
-            return ApiUtils.success(postService.findById(id));
+            return ApiUtils.success(
+                new Post.FindResponse(postService.findById(id))
+            );
         }
         catch (EntityNotFoundException e) {
             return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -54,7 +63,9 @@ public class PostApiController {
     public ApiResult<?> modify(@RequestBody Post.ModifyRequest requestDto, Authentication authentication) {
         try {
             String memberId = (String)authentication.getPrincipal();
-            return ApiUtils.success(postService.modify(requestDto, memberId));
+            return ApiUtils.success(
+                new Post.FindResponse(postService.modify(requestDto, memberId))
+            );
         }
         catch (EntityNotFoundException | ValidationException e) {
             return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -4,6 +4,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 
@@ -18,10 +19,11 @@ public class MemberService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void save(Member.SaveRequest requestDto) {
+    @Transactional
+    public Member save(Member.SaveRequest requestDto) throws Exception {
         requestDto.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-
-        memberRepository.save(requestDto.toEntity());
+        
+        return memberRepository.save(requestDto.toEntity());
     }
 
     public Member.LoginResponse authenticateByIdAndPassword(Member.LoginRequest requestDto) {
