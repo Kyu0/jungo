@@ -43,6 +43,11 @@ public class Post extends BaseTimeEntity {
     @Column(name = "VIEW_COUNT")
     private int viewCount;
 
+    private boolean abcde;
+
+    @Column(name = "IS_SOLD")
+    private boolean isSold;
+
     @NotNull(message = "카테고리의 id를 입력해주세요.")
     @ManyToOne
     @JoinColumn(name = "CATEGORY_ID", nullable = false)
@@ -112,6 +117,7 @@ public class Post extends BaseTimeEntity {
                 .title(title)
                 .content(content)
                 .viewCount(0)
+                .isSold(false)
                 .member(member)
                 .category(postCategory)
             .build();
@@ -127,6 +133,7 @@ public class Post extends BaseTimeEntity {
         private Long id;
         private String title;
         private String content;
+        private boolean isSold;
         private Integer categoryId;
 
         public @Valid Post toEntity(Post post, PostCategory category) {
@@ -135,6 +142,7 @@ public class Post extends BaseTimeEntity {
                 .title(title)
                 .content(content)
                 .viewCount(post.getViewCount())
+                .isSold(isSold)
                 .category(category)
                 .member(post.getMember())
                 .comments(post.getComments())
@@ -151,6 +159,7 @@ public class Post extends BaseTimeEntity {
         private String content;
         private Integer categoryId;
         private int viewCount;
+        private boolean isSold;
         private String memberId;
         private List<Comment.FindResponse> comments;
         private LocalDateTime createdAt;
@@ -162,6 +171,7 @@ public class Post extends BaseTimeEntity {
             this.content = post.getContent();
             this.categoryId = post.getCategory().getId();
             this.viewCount = post.getViewCount();
+            this.isSold = post.isSold();
             this.memberId = post.getMember().getId();
             this.comments = post.getComments().stream().map(Comment.FindResponse::new)
                 .collect(Collectors.toUnmodifiableList());
@@ -177,12 +187,14 @@ public class Post extends BaseTimeEntity {
         private String title;
         private Integer categoryId;
         private int viewCount;
+        private boolean isSold;
         private String memberId;
         private LocalDateTime createdAt;
         
         public FindAllResponse (Post post) {
             this.id = post.getId();
             this.title = post.getTitle();
+            this.isSold = post.isSold();
             this.categoryId = post.getCategory().getId();
             this.memberId = post.getMember().getId();
             this.createdAt = post.getCreatedAt();
