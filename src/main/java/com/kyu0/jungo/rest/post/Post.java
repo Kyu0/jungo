@@ -14,9 +14,9 @@ import org.hibernate.validator.constraints.Length;
 
 import com.kyu0.jungo.rest.BaseTimeEntity;
 import com.kyu0.jungo.rest.attach.Attach;
+import com.kyu0.jungo.rest.category.Category;
 import com.kyu0.jungo.rest.comment.Comment;
 import com.kyu0.jungo.rest.member.Member;
-import com.kyu0.jungo.rest.postcategory.PostCategory;
 
 import lombok.*;
 
@@ -51,7 +51,7 @@ public class Post extends BaseTimeEntity {
     @NotNull(message = "카테고리의 id를 입력해주세요.")
     @ManyToOne
     @JoinColumn(name = "CATEGORY_ID", nullable = false)
-    private PostCategory category;
+    private Category category;
 
     @NotNull(message = "작성자의 id를 입력해주세요.")
     @ManyToOne
@@ -74,7 +74,7 @@ public class Post extends BaseTimeEntity {
         }
     }
 
-    public void setCategory(PostCategory category) {
+    public void setCategory(Category category) {
         this.category = category;
 
         if (!category.getPosts().contains(this)) {
@@ -112,14 +112,14 @@ public class Post extends BaseTimeEntity {
         private String content;
         private Integer categoryId;
 
-        public @Valid Post toEntity(Member member, PostCategory postCategory) {
+        public @Valid Post toEntity(Member member, Category category) {
             return Post.builder()
                 .title(title)
                 .content(content)
                 .viewCount(0)
                 .isSold(false)
                 .member(member)
-                .category(postCategory)
+                .category(category)
             .build();
         }
     }
@@ -136,7 +136,7 @@ public class Post extends BaseTimeEntity {
         private boolean isSold;
         private Integer categoryId;
 
-        public @Valid Post toEntity(Post post, PostCategory category) {
+        public @Valid Post toEntity(Post post, Category category) {
             return Post.builder()
                 .id(id)
                 .title(title)

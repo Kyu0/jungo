@@ -1,4 +1,4 @@
-package com.kyu0.jungo.rest.postcategory;
+package com.kyu0.jungo.rest.category;
 
 import java.util.stream.Collectors;
 
@@ -17,27 +17,27 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @AllArgsConstructor
 @RestController
-public class PostCategoryApiController {
+public class CategoryApiController {
     
-    private final PostCategoryService postCategoryService;
+    private final CategoryService categoryService;
 
     @GetMapping("/api/post-categories")
     public ApiResult<?> findAll() {
         return ApiUtils.success(
-            postCategoryService.findAll().stream().map(PostCategory.FindAllResponse::new)
+            categoryService.findAll().stream().map(Category.FindAllResponse::new)
             .collect(Collectors.toUnmodifiableList())
         );
     }
 
     @GetMapping("/api/post-categories/{id}")
     public ApiResult<?> findById(@PathVariable Integer id){
-        return ApiUtils.success(new PostCategory.FindResponse(postCategoryService.findById(id)));
+        return ApiUtils.success(new Category.FindResponse(categoryService.findById(id)));
     }
 
     @PostMapping("/api/post-categories")
-    public ApiResult<?> save(@RequestBody PostCategory.SaveRequest requestDto) {
+    public ApiResult<?> save(@RequestBody Category.SaveRequest requestDto) {
         try {
-            return ApiUtils.success(postCategoryService.save(requestDto).getId());
+            return ApiUtils.success(categoryService.save(requestDto).getId());
         }
         catch (ValidationException e) {
             log.error(e.getMessage());
@@ -46,9 +46,9 @@ public class PostCategoryApiController {
     }
 
     @PutMapping("/api/post-categories")
-    public ApiResult<?> modify(@RequestBody PostCategory.ModifyRequest requestDto) {
+    public ApiResult<?> modify(@RequestBody Category.ModifyRequest requestDto) {
         try {
-            return ApiUtils.success(new PostCategory.FindResponse(postCategoryService.modify(requestDto)));
+            return ApiUtils.success(new Category.FindResponse(categoryService.modify(requestDto)));
         }
         catch (ValidationException | EntityNotFoundException e) {
             log.error(e.getMessage());
@@ -59,7 +59,7 @@ public class PostCategoryApiController {
     @DeleteMapping("/api/post-categories/{id}")
     public ApiResult<?> delete(@PathVariable Integer id) {
         try {
-            return ApiUtils.success(postCategoryService.delete(id));
+            return ApiUtils.success(categoryService.delete(id));
         }
         catch (EntityNotFoundException e) {
             log.error(e.getMessage());

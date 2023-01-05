@@ -23,12 +23,15 @@ import java.util.ArrayList;
 import javax.validation.ValidationException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kyu0.jungo.rest.postcategory.PostCategory.ModifyRequest;
-import com.kyu0.jungo.rest.postcategory.PostCategory.SaveRequest;
+import com.kyu0.jungo.rest.category.Category;
+import com.kyu0.jungo.rest.category.CategoryApiController;
+import com.kyu0.jungo.rest.category.CategoryService;
+import com.kyu0.jungo.rest.category.Category.ModifyRequest;
+import com.kyu0.jungo.rest.category.Category.SaveRequest;
 
-@WebMvcTest(PostCategoryApiController.class)
+@WebMvcTest(CategoryApiController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-public class PostCategoryControllerTest {
+public class categoryControllerTest {
     
     private final static String URL = "/api/post-categories";
 
@@ -39,7 +42,7 @@ public class PostCategoryControllerTest {
     private ObjectMapper mapper;
 
     @MockBean
-    private PostCategoryService postCategoryService;
+    private CategoryService categoryService;
 
     @Test
     @DisplayName("카테고리 생성 테스트 - 1")
@@ -49,8 +52,8 @@ public class PostCategoryControllerTest {
         final SaveRequest REQUEST_DTO = new SaveRequest(TEST_NAME);
         
         // given
-        when(postCategoryService.save(refEq(REQUEST_DTO)))
-            .thenReturn(new PostCategory(1, TEST_NAME, new ArrayList<>()));
+        when(categoryService.save(refEq(REQUEST_DTO)))
+            .thenReturn(new Category(1, TEST_NAME, new ArrayList<>()));
 
         
         // when
@@ -67,7 +70,7 @@ public class PostCategoryControllerTest {
         .andExpect(jsonPath("$.response.id").value(1))
         .andDo(print());
 
-        verify(postCategoryService).save(refEq(REQUEST_DTO));
+        verify(categoryService).save(refEq(REQUEST_DTO));
     }
 
     @Test
@@ -78,7 +81,7 @@ public class PostCategoryControllerTest {
         final SaveRequest REQUEST_DTO = new SaveRequest(TEST_NAME);
 
         // given
-        when(postCategoryService.save(refEq(REQUEST_DTO)))
+        when(categoryService.save(refEq(REQUEST_DTO)))
             .thenThrow(new ValidationException("카테고리 이름은 10자 이하로 입력해주세요."));
         
         // when
@@ -95,7 +98,7 @@ public class PostCategoryControllerTest {
         .andExpect(jsonPath("$.response").doesNotExist())
         .andDo(print());
 
-        verify(postCategoryService).save(refEq(REQUEST_DTO));
+        verify(categoryService).save(refEq(REQUEST_DTO));
     }
 
     @Test
@@ -106,7 +109,7 @@ public class PostCategoryControllerTest {
         final SaveRequest REQUEST_DTO = new SaveRequest(TEST_NAME);
 
         // given
-        when(postCategoryService.save(refEq(REQUEST_DTO)))
+        when(categoryService.save(refEq(REQUEST_DTO)))
             .thenThrow(new ValidationException("카테고리의 이름을 입력해주세요."));
 
         // when
@@ -123,7 +126,7 @@ public class PostCategoryControllerTest {
         .andExpect(jsonPath("$.response").doesNotExist())
         .andDo(print());
 
-        verify(postCategoryService).save(refEq(REQUEST_DTO));
+        verify(categoryService).save(refEq(REQUEST_DTO));
     }
 
     @Test
@@ -134,8 +137,8 @@ public class PostCategoryControllerTest {
         /** given
          * id : 1, name : test, posts : []
          */
-        when(postCategoryService.findById(TEST_ID))
-            .thenReturn(new PostCategory(TEST_ID, "test", new ArrayList<>()));
+        when(categoryService.findById(TEST_ID))
+            .thenReturn(new Category(TEST_ID, "test", new ArrayList<>()));
         
         // when
         mockMvc.perform(get(URL + '/' + TEST_ID))
@@ -150,14 +153,14 @@ public class PostCategoryControllerTest {
         .andExpect(jsonPath("$.response.name").value("test"))
         .andDo(print());
 
-        verify(postCategoryService).findById(TEST_ID);
+        verify(categoryService).findById(TEST_ID);
     }
 
     @Test
     @WithMockUser(roles = {"USER"})
     public void 카테고리_조회_테스트_2() throws Exception {
         // given
-        when(postCategoryService.findAll())
+        when(categoryService.findAll())
             .thenReturn(new ArrayList<>());
 
         // when
@@ -171,7 +174,7 @@ public class PostCategoryControllerTest {
         .andExpect(jsonPath("$.response").isArray())
         .andDo(print());
 
-        verify(postCategoryService).findAll();
+        verify(categoryService).findAll();
     }
 
     @Test
@@ -180,10 +183,10 @@ public class PostCategoryControllerTest {
         final int TEST_ID = 1;
         final String MODIFIED_NAME = "수정했어요";
         final ModifyRequest REQUEST_DTO = new ModifyRequest(TEST_ID, MODIFIED_NAME);
-        final PostCategory RESULT = new PostCategory(TEST_ID, MODIFIED_NAME, new ArrayList<>());
+        final Category RESULT = new Category(TEST_ID, MODIFIED_NAME, new ArrayList<>());
 
         // given
-        when(postCategoryService.modify(refEq(REQUEST_DTO)))
+        when(categoryService.modify(refEq(REQUEST_DTO)))
             .thenReturn(RESULT);
 
         // when
@@ -200,7 +203,7 @@ public class PostCategoryControllerTest {
         .andExpect(jsonPath("$.response.name").value(MODIFIED_NAME))
         .andDo(print());
 
-        verify(postCategoryService).modify(refEq(REQUEST_DTO));
+        verify(categoryService).modify(refEq(REQUEST_DTO));
     }
 
     @Test
@@ -211,7 +214,7 @@ public class PostCategoryControllerTest {
         final ModifyRequest REQUEST_DTO = new ModifyRequest(TEST_ID, MODIFIED_NAME);
         
         // given
-        when(postCategoryService.modify(refEq(REQUEST_DTO)))
+        when(categoryService.modify(refEq(REQUEST_DTO)))
             .thenThrow(new ValidationException("카테고리의 이름은 10자 이하로 입력해주세요."));
 
         // when
@@ -227,6 +230,6 @@ public class PostCategoryControllerTest {
         .andExpect(jsonPath("$.response").doesNotExist())
         .andDo(print());
 
-        verify(postCategoryService).modify(refEq(REQUEST_DTO));
+        verify(categoryService).modify(refEq(REQUEST_DTO));
     }
 }

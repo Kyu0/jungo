@@ -1,4 +1,4 @@
-package com.kyu0.jungo.rest.postcategory;
+package com.kyu0.jungo.rest.category;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,9 +15,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Entity(name="POST_CATEGORY")
+@Entity(name="CATEGORY")
 @Builder
-public class PostCategory {
+public class Category {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,8 +50,8 @@ public class PostCategory {
     public static class SaveRequest {
         private String name;
         
-        public @Valid PostCategory toEntity() {
-            return PostCategory.builder()
+        public @Valid Category toEntity() {
+            return Category.builder()
                 .name(this.name)
             .build();
         }
@@ -65,8 +65,8 @@ public class PostCategory {
         private Integer id;
         private String name;
 
-        public @Valid PostCategory toEntity(PostCategory category) {
-            return new PostCategory(category.id, this.name, category.posts);
+        public @Valid Category toEntity(Category category) {
+            return new Category(category.id, this.name, category.posts);
         }
     }
 
@@ -77,7 +77,7 @@ public class PostCategory {
         private String name;
         private List<Post.FindAllResponse> posts;
 
-        public FindResponse(PostCategory category) {
+        public FindResponse(Category category) {
             this.id = category.getId();
             this.name = category.getName();
             this.posts = category.getPosts().stream().map(Post.FindAllResponse::new)
@@ -91,7 +91,7 @@ public class PostCategory {
         private Integer id;
         private String name;
 
-        public FindAllResponse(PostCategory category) {
+        public FindAllResponse(Category category) {
             this.id = category.getId();
             this.name = category.getName();
         }
