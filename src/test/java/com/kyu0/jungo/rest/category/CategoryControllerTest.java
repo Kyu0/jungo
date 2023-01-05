@@ -1,4 +1,4 @@
-package com.kyu0.jungo.rest.postcategory;
+package com.kyu0.jungo.rest.category;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,9 +23,6 @@ import java.util.ArrayList;
 import javax.validation.ValidationException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kyu0.jungo.rest.category.Category;
-import com.kyu0.jungo.rest.category.CategoryApiController;
-import com.kyu0.jungo.rest.category.CategoryService;
 import com.kyu0.jungo.rest.category.Category.ModifyRequest;
 import com.kyu0.jungo.rest.category.Category.SaveRequest;
 
