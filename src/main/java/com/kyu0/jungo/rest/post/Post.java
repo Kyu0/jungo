@@ -43,8 +43,6 @@ public class Post extends BaseTimeEntity {
     @Column(name = "VIEW_COUNT")
     private int viewCount;
 
-    private boolean abcde;
-
     @Column(name = "IS_SOLD")
     private boolean isSold;
 
