@@ -118,6 +118,7 @@ public class CategoryControllerTest {
             .with(csrf())
             .contentType(MediaType.APPLICATION_JSON))
         
+            
         /** then
          * 실패
          */
