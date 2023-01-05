@@ -29,10 +29,10 @@ public class CommentService {
         return commentRepository.save(requestDto.toEntity(member, post));
     }
 
-    public Comment modify(ModifyRequest requestDto, String memberId) {
+    public Comment modify(ModifyRequest requestDto) {
         Comment comment = commentRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 댓글이 없습니다."));
 
-        if (!comment.getMember().getId().equals(memberId)) {
+        if (!isOwner(comment, requestDto)) {
             throw new AccessDeniedException("해당 댓글을 수정할 권한이 없습니다.");
         }
         
@@ -48,12 +48,20 @@ public class CommentService {
     public boolean delete(Long id, String memberId) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 댓글이 없습니다."));
 
-        if (!comment.getMember().getId().equals(memberId)) {
+        if (!isOwner(comment, memberId)) {
             throw new AccessDeniedException("해당 댓글을 지울 권한이 없습니다.");
         }
 
         commentRepository.delete(comment);
 
         return commentRepository.existsById(id);
+    }
+
+    private boolean isOwner(Comment comment, ModifyRequest requestDto) {
+        return comment.getMember().getId().equals(requestDto.getMemberId());
+    }
+
+    private boolean isOwner(Comment comment, String memberId) {
+        return comment.getMember().getId().equals(memberId);
     }
 }

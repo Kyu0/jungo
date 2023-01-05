@@ -42,7 +42,7 @@ public class CommentApiController {
             String memberId = (String)authentication.getPrincipal();
             requestDto.setMemberId(memberId);
 
-            return ApiUtils.success(new Comment.FindResponse(commentService.modify(requestDto, memberId)));
+            return ApiUtils.success(new Comment.FindResponse(commentService.modify(requestDto)));
         }
         catch (Exception e) {
             return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
