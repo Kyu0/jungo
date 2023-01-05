@@ -21,7 +21,7 @@ public class CategoryApiController {
     
     private final CategoryService categoryService;
 
-    @GetMapping("/api/post-categories")
+    @GetMapping("/api/categories")
     public ApiResult<?> findAll() {
         return ApiUtils.success(
             categoryService.findAll().stream().map(Category.FindAllResponse::new)
@@ -29,12 +29,12 @@ public class CategoryApiController {
         );
     }
 
-    @GetMapping("/api/post-categories/{id}")
+    @GetMapping("/api/categories/{id}")
     public ApiResult<?> findById(@PathVariable Integer id){
         return ApiUtils.success(new Category.FindResponse(categoryService.findById(id)));
     }
 
-    @PostMapping("/api/post-categories")
+    @PostMapping("/api/categories")
     public ApiResult<?> save(@RequestBody Category.SaveRequest requestDto) {
         try {
             return ApiUtils.success(categoryService.save(requestDto).getId());
@@ -45,7 +45,7 @@ public class CategoryApiController {
         }
     }
 
-    @PutMapping("/api/post-categories")
+    @PutMapping("/api/categories")
     public ApiResult<?> modify(@RequestBody Category.ModifyRequest requestDto) {
         try {
             return ApiUtils.success(new Category.FindResponse(categoryService.modify(requestDto)));
@@ -56,7 +56,7 @@ public class CategoryApiController {
         }
     }
 
-    @DeleteMapping("/api/post-categories/{id}")
+    @DeleteMapping("/api/categories/{id}")
     public ApiResult<?> delete(@PathVariable Integer id) {
         try {
             return ApiUtils.success(categoryService.delete(id));

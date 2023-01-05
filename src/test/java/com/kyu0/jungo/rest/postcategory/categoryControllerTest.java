@@ -33,7 +33,7 @@ import com.kyu0.jungo.rest.category.Category.SaveRequest;
 @MockBean(JpaMetamodelMappingContext.class)
 public class CategoryControllerTest {
     
-    private final static String URL = "/api/post-categories";
+    private final static String URL = "/api/categories";
 
     @Autowired
     private MockMvc mockMvc;
