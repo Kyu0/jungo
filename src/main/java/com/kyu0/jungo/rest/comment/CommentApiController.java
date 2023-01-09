@@ -1,5 +1,8 @@
 package com.kyu0.jungo.rest.comment;
 
+import javax.persistence.EntityNotFoundException;
+import javax.validation.ValidationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,7 +33,7 @@ public class CommentApiController {
 
             return ApiUtils.success(commentService.save(requestDto).getId());
         }
-        catch (Exception e) {
+        catch (EntityNotFoundException | ValidationException e) {
             return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

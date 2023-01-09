@@ -55,7 +55,9 @@ public class Comment extends BaseTimeEntity {
     @AllArgsConstructor
     public static class SaveRequest {
         private String content;
+        @NotBlank
         private String memberId;
+        @NotNull
         private Long postId;
 
         public @Valid Comment toEntity(Member member, Post post) {

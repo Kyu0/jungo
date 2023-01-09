@@ -1,6 +1,8 @@
 package com.kyu0.jungo.rest.comment;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -22,14 +24,14 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
-    public Comment save(SaveRequest requestDto) throws EntityNotFoundException {
+    public Comment save(@Valid SaveRequest requestDto) throws EntityNotFoundException, ValidationException {
         Member member = memberRepository.findById(requestDto.getMemberId()).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 회원이 없습니다."));
         Post post = postRepository.findById(requestDto.getPostId()).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 게시글을 찾을 수 없습니다."));
 
         return commentRepository.save(requestDto.toEntity(member, post));
     }
 
-    public Comment modify(ModifyRequest requestDto) {
+    public Comment modify(@Valid ModifyRequest requestDto) throws EntityNotFoundException, ValidationException, AccessDeniedException {
         Comment comment = commentRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 댓글이 없습니다."));
 
         if (!isOwner(comment, requestDto)) {
@@ -45,7 +47,7 @@ public class CommentService {
             .build());
     }
 
-    public boolean delete(Long id, String memberId) {
+    public boolean delete(Long id, String memberId) throws EntityNotFoundException, ValidationException, AccessDeniedException {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 댓글이 없습니다."));
 
         if (!isOwner(comment, memberId)) {
