@@ -106,8 +106,10 @@ public class Post extends BaseTimeEntity {
     public static class SaveRequest {
         
         private String memberId;
+        @NotBlank
         private String title;
         private String content;
+        @NotNull
         private Integer categoryId;
 
         public @Valid Post toEntity(Member member, Category category) {
@@ -129,9 +131,11 @@ public class Post extends BaseTimeEntity {
     public static class ModifyRequest {
 
         private Long id;
+        @NotBlank
         private String title;
         private String content;
         private boolean isSold;
+        @NotNull
         private Integer categoryId;
 
         public @Valid Post toEntity(Post post, Category category) {

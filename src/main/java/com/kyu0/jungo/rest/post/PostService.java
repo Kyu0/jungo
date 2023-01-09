@@ -1,6 +1,7 @@
 package com.kyu0.jungo.rest.post;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.springframework.data.domain.Page;
@@ -31,14 +32,14 @@ public class PostService {
     private static final String DELETE_NOT_ALLOWED = "해당 게시글을 삭제할 권한이 없습니다.";
 
     @Transactional
-    public Long save(Post.SaveRequest requestDto) throws ValidationException, EntityNotFoundException {
+    public Long save(@Valid Post.SaveRequest requestDto) throws ValidationException, EntityNotFoundException {
         Category category = categoryRepository.findById(requestDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND));
         Member member = memberRepository.findById(requestDto.getMemberId()).orElseThrow(() -> new EntityNotFoundException(MEMBER_NOT_FOUND));
 
         return postRepository.save(requestDto.toEntity(member, category)).getId();
     }
 
-    public Post modify(ModifyRequest requestDto, String memberId) throws EntityNotFoundException, AccessDeniedException {
+    public Post modify(@Valid ModifyRequest requestDto, String memberId) throws EntityNotFoundException, AccessDeniedException {
         Post post = postRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 게시글이 없습니다."));
         Category category = categoryRepository.findById(requestDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND));
 

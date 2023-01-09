@@ -50,7 +50,7 @@ public class PostApiController {
     @PostMapping("/api/posts")
     public ApiResult<?> save(@RequestBody Post.SaveRequest requestDto, Authentication authentication) {
         try {
-            requestDto.setMemberId((String)authentication.getPrincipal());
+            requestDto.setMemberId((String)(authentication.getPrincipal()));
             return ApiUtils.success(postService.save(requestDto));
         }
         catch (ValidationException | EntityNotFoundException e) {
@@ -62,7 +62,7 @@ public class PostApiController {
     @PutMapping("/api/posts")
     public ApiResult<?> modify(@RequestBody Post.ModifyRequest requestDto, Authentication authentication) {
         try {
-            String memberId = (String)authentication.getPrincipal();
+            String memberId = (String)(authentication.getPrincipal());
             return ApiUtils.success(
                 new Post.FindResponse(postService.modify(requestDto, memberId))
             );
@@ -76,7 +76,7 @@ public class PostApiController {
     @DeleteMapping("/api/posts/{id}")
     public ApiResult<?> delete(@PathVariable Long id, Authentication authentication) {
         try {
-            String memberId = (String)authentication.getPrincipal();
+            String memberId = (String)(authentication.getPrincipal());
             return ApiUtils.success(postService.delete(id, memberId));
         }
         catch (EntityNotFoundException e) {

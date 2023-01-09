@@ -64,7 +64,7 @@ public class CategoryControllerTest {
          */
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.success").value(true))
-        .andExpect(jsonPath("$.response.id").value(1))
+        .andExpect(jsonPath("$.response").value(1))
         .andDo(print());
 
         verify(categoryService).save(refEq(REQUEST_DTO));
