@@ -17,9 +17,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kyu0.jungo.rest.comment.Comment.DeleteRequest;
+import com.kyu0.jungo.rest.comment.Comment.ModifyRequest;
 import com.kyu0.jungo.rest.comment.Comment.SaveRequest;
 import com.kyu0.jungo.rest.member.Member;
 import com.kyu0.jungo.rest.post.Post;
@@ -82,5 +85,90 @@ public class CommentControllerTest {
         .andDo(print());
 
         verify(commentService).save(refEq(REQUEST_DTO));
+    }
+
+    @Test
+    @DisplayName("댓글 수정 테스트 - 1, 성공")
+    @WithCustomMockUser(username = "kyu0", roles = {"USER"})
+    public void 댓글_수정_테스트_1() throws Exception {
+        final ModifyRequest REQUEST_DTO = new ModifyRequest(1L, "테스트용 댓글입니다.", "kyu0");
+
+        when(commentService.modify(refEq(REQUEST_DTO)))
+            .thenReturn(new Comment(1L, "테스트용 댓글입니다.", new Member("kyu0", null, null, null), new Post(1L, null, null, 0, false, null, null, null, null)));
+
+        mockMvc.perform(put(URL)
+            .content(mapper.writeValueAsString(REQUEST_DTO))
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON))
+
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.response.content").value("테스트용 댓글입니다."))
+        .andDo(print());
+
+        verify(commentService).modify(refEq(REQUEST_DTO));
+    }
+
+    @Test
+    @DisplayName("댓글 수정 테스트 - 2, 실패")
+    @WithCustomMockUser(username = "kyu0", roles = {"USER"})
+    public void 댓글_수정_테스트_2() throws Exception {
+        final ModifyRequest REQUEST_DTO = new ModifyRequest(1L, "테스트용 댓글입니다.", "kyu0");
+
+        when(commentService.modify(refEq(REQUEST_DTO)))
+            .thenThrow(new AccessDeniedException("댓글을 수정할 권한이 없습니다."));
+
+        mockMvc.perform(put(URL)
+            .content(mapper.writeValueAsString(REQUEST_DTO))
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON))
+
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(false))
+        .andDo(print());
+
+        verify(commentService).modify(refEq(REQUEST_DTO));
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 테스트 - 1, 성공")
+    @WithCustomMockUser(username = "kyu0", roles = {"USER"})
+    public void 댓글_삭제_테스트_1() throws Exception {
+        final DeleteRequest REQUEST_DTO = new DeleteRequest(1L, "kyu0");
+
+        when(commentService.delete(refEq(REQUEST_DTO)))
+            .thenReturn(true);
+
+        mockMvc.perform(delete(URL)
+            .content(mapper.writeValueAsString(REQUEST_DTO))
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON))
+
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andDo(print());
+
+        verify(commentService).delete(refEq(REQUEST_DTO));
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 테스트 - 2, 실패")
+    @WithCustomMockUser(username = "kyu0", roles = {"USER"})
+    public void 댓글_삭제_테스트_2() throws Exception {
+        final DeleteRequest REQUEST_DTO = new DeleteRequest(1L, "kyu0");
+
+        when(commentService.delete(refEq(REQUEST_DTO)))
+            .thenThrow(new AccessDeniedException("댓글을 삭제할 권한이 없습니다."));
+
+        mockMvc.perform(delete(URL)
+            .content(mapper.writeValueAsString(REQUEST_DTO))
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON))
+
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(false))
+        .andDo(print());
+
+        verify(commentService).delete(refEq(REQUEST_DTO));
     }
 }

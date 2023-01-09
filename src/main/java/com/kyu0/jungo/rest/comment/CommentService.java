@@ -7,6 +7,7 @@ import javax.validation.ValidationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import com.kyu0.jungo.rest.comment.Comment.DeleteRequest;
 import com.kyu0.jungo.rest.comment.Comment.ModifyRequest;
 import com.kyu0.jungo.rest.comment.Comment.SaveRequest;
 import com.kyu0.jungo.rest.member.Member;
@@ -47,16 +48,16 @@ public class CommentService {
             .build());
     }
 
-    public boolean delete(Long id, String memberId) throws EntityNotFoundException, ValidationException, AccessDeniedException {
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 댓글이 없습니다."));
+    public boolean delete(DeleteRequest requestDto) throws EntityNotFoundException, ValidationException, AccessDeniedException {
+        Comment comment = commentRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 댓글이 없습니다."));
 
-        if (!isOwner(comment, memberId)) {
+        if (!isOwner(comment, requestDto.getMemberId())) {
             throw new AccessDeniedException("해당 댓글을 지울 권한이 없습니다.");
         }
 
         commentRepository.delete(comment);
 
-        return commentRepository.existsById(id);
+        return commentRepository.existsById(requestDto.getId());
     }
 
     private boolean isOwner(Comment comment, ModifyRequest requestDto) {

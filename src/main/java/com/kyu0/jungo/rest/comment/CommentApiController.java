@@ -4,6 +4,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,20 +48,21 @@ public class CommentApiController {
 
             return ApiUtils.success(new Comment.FindResponse(commentService.modify(requestDto)));
         }
-        catch (Exception e) {
+        catch (EntityNotFoundException | ValidationException | AccessDeniedException e) {
             return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @LoginCheck
-    @DeleteMapping("/api/comments/{id}")
-    public ApiResult<?> delete(@PathVariable Long id, Authentication authentication) {
+    @DeleteMapping("/api/comments")
+    public ApiResult<?> delete(@RequestBody Comment.DeleteRequest requestDto, Authentication authentication) {
         try {
             String memberId = (String)authentication.getPrincipal();
+            requestDto.setMemberId(memberId);
             
-            return ApiUtils.success(commentService.delete(id, memberId));
+            return ApiUtils.success(commentService.delete(requestDto));
         }
-        catch (Exception e) {
+        catch (EntityNotFoundException | ValidationException | AccessDeniedException e) {
             return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

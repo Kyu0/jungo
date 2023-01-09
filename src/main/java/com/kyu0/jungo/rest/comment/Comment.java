@@ -74,8 +74,21 @@ public class Comment extends BaseTimeEntity {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ModifyRequest {
+        @NotNull
         private Long id;
         private String content;
+        @NotBlank
+        private String memberId;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteRequest {
+        @NotNull
+        private Long id;
+        @NotBlank
         private String memberId;
     }
 
