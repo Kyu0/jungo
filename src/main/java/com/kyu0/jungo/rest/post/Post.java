@@ -105,6 +105,7 @@ public class Post extends BaseTimeEntity {
     @AllArgsConstructor
     public static class SaveRequest {
         
+        @NotBlank
         private String memberId;
         @NotBlank
         private String title;
@@ -134,6 +135,8 @@ public class Post extends BaseTimeEntity {
         @NotBlank
         private String title;
         private String content;
+        @NotBlank
+        private String memberId;
         private boolean isSold;
         @NotNull
         private Integer categoryId;
@@ -155,6 +158,17 @@ public class Post extends BaseTimeEntity {
 
     @Getter
     @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteRequest {
+        @NotNull
+        private Long id;
+        @NotNull
+        private String memberId;
+    }
+
+    @Getter
+    @Setter
     public static class FindResponse {
         private Long id;
         private String title;
@@ -167,7 +181,7 @@ public class Post extends BaseTimeEntity {
         private LocalDateTime createdAt;
         private LocalDateTime lastModifiedAt;
 
-        public FindResponse (Post post) {
+        public FindResponse (@Valid Post post) {
             this.id = post.getId();
             this.title = post.getTitle();
             this.content = post.getContent();
@@ -193,7 +207,7 @@ public class Post extends BaseTimeEntity {
         private String memberId;
         private LocalDateTime createdAt;
         
-        public FindAllResponse (Post post) {
+        public FindAllResponse (@Valid Post post) {
             this.id = post.getId();
             this.title = post.getTitle();
             this.isSold = post.isSold();

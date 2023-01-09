@@ -8,6 +8,7 @@ import javax.validation.ValidationException;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,24 +63,24 @@ public class PostApiController {
     @PutMapping("/api/posts")
     public ApiResult<?> modify(@RequestBody Post.ModifyRequest requestDto, Authentication authentication) {
         try {
-            String memberId = (String)(authentication.getPrincipal());
+            requestDto.setMemberId((String)(authentication.getPrincipal()));
             return ApiUtils.success(
-                new Post.FindResponse(postService.modify(requestDto, memberId))
+                new Post.FindResponse(postService.modify(requestDto))
             );
         }
-        catch (EntityNotFoundException | ValidationException e) {
+        catch (EntityNotFoundException | ValidationException | AccessDeniedException e) {
             return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @LoginCheck
-    @DeleteMapping("/api/posts/{id}")
-    public ApiResult<?> delete(@PathVariable Long id, Authentication authentication) {
+    @DeleteMapping("/api/posts")
+    public ApiResult<?> delete(@RequestBody Post.DeleteRequest requestDto , Authentication authentication) {
         try {
-            String memberId = (String)(authentication.getPrincipal());
-            return ApiUtils.success(postService.delete(id, memberId));
+            requestDto.setMemberId((String)(authentication.getPrincipal()));
+            return ApiUtils.success(postService.delete(requestDto));
         }
-        catch (EntityNotFoundException e) {
+        catch (EntityNotFoundException | AccessDeniedException e) {
             return ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

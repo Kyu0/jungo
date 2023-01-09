@@ -14,6 +14,7 @@ import com.kyu0.jungo.rest.category.Category;
 import com.kyu0.jungo.rest.category.CategoryRepository;
 import com.kyu0.jungo.rest.member.Member;
 import com.kyu0.jungo.rest.member.MemberRepository;
+import com.kyu0.jungo.rest.post.Post.DeleteRequest;
 import com.kyu0.jungo.rest.post.Post.ModifyRequest;
 
 import lombok.AllArgsConstructor;
@@ -39,27 +40,27 @@ public class PostService {
         return postRepository.save(requestDto.toEntity(member, category)).getId();
     }
 
-    public Post modify(@Valid ModifyRequest requestDto, String memberId) throws EntityNotFoundException, AccessDeniedException {
+    public Post modify(@Valid ModifyRequest requestDto) throws EntityNotFoundException, AccessDeniedException {
         Post post = postRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 게시글이 없습니다."));
         Category category = categoryRepository.findById(requestDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND));
 
-        if (!post.getMember().getId().equals(memberId)) {
+        if (!post.getMember().getId().equals(requestDto.getMemberId())) {
             throw new AccessDeniedException(MODIFY_NOT_ALLOWED);
         }
 
         return postRepository.save(requestDto.toEntity(post, category));
     }
 
-    public boolean delete(Long id, String memberId) throws EntityNotFoundException, AccessDeniedException {
-        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
+    public boolean delete(@Valid DeleteRequest requestDto) throws EntityNotFoundException, AccessDeniedException {
+        Post post = postRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
 
-        if (!post.getMember().getId().equals(memberId)) {
+        if (!post.getMember().getId().equals(requestDto.getMemberId())) {
             throw new AccessDeniedException(DELETE_NOT_ALLOWED);
         }
 
         postRepository.delete(post);
 
-        return !postRepository.existsById(id);
+        return !postRepository.existsById(requestDto.getId());
     }
 
     @Transactional(readOnly = true)
