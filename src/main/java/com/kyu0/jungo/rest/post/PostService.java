@@ -33,7 +33,7 @@ public class PostService {
     private static final String MODIFY_NOT_ALLOWED = "해당 게시글을 수정할 권한이 없습니다.";
     private static final String DELETE_NOT_ALLOWED = "해당 게시글을 삭제할 권한이 없습니다.";
 
-    @Transactional
+    @Transactional(rollbackFor = {ValidationException.class, EntityNotFoundException.class})
     public Long save(@Valid Post.SaveRequest requestDto) throws ValidationException, EntityNotFoundException {
         Category category = categoryRepository.findById(requestDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND));
         Member member = memberRepository.findById(requestDto.getMemberId()).orElseThrow(() -> new EntityNotFoundException(MEMBER_NOT_FOUND));
@@ -41,8 +41,8 @@ public class PostService {
         return postRepository.save(requestDto.toEntity(member, category)).getId();
     }
 
-    @Transactional
-    public Post modify(@Valid ModifyRequest requestDto) throws EntityNotFoundException, AccessDeniedException {
+    @Transactional(rollbackFor = {EntityNotFoundException.class, AccessDeniedException.class, ValidationException.class})
+    public Post modify(@Valid ModifyRequest requestDto) throws EntityNotFoundException, AccessDeniedException, ValidationException {
         Post post = postRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 게시글이 없습니다."));
         Category category = categoryRepository.findById(requestDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND));
 
@@ -53,7 +53,7 @@ public class PostService {
         return postRepository.save(requestDto.toEntity(post, category));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class, AccessDeniedException.class, ValidationException.class})
     public boolean delete(@Valid DeleteRequest requestDto) throws EntityNotFoundException, AccessDeniedException {
         Post post = postRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
 

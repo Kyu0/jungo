@@ -28,27 +28,26 @@ public class CategoryService {
         return categoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = {ValidationException.class})
     public Category save(Category.SaveRequest requestDto) throws ValidationException {
         return categoryRepository.save(requestDto.toEntity());
     }
 
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class, ValidationException.class})
     public Category modify(Category.ModifyRequest requestDto) throws ValidationException, EntityNotFoundException {
         Category category = categoryRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE));
 
         return categoryRepository.save(requestDto.toEntity(category));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class})
     public boolean delete(Integer id) throws EntityNotFoundException {
-        if (categoryRepository.existsById(id)) {
-            categoryRepository.deleteById(id);
-
-            return !categoryRepository.existsById(id);
-        }
-        else {
+        if (!categoryRepository.existsById(id)) {
             throw new EntityNotFoundException(NOT_FOUND_MESSAGE);
         }
+
+        categoryRepository.deleteById(id);
+
+        return !categoryRepository.existsById(id);
     }
 }
