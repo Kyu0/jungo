@@ -4,6 +4,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
@@ -26,6 +27,7 @@ public class MemberService {
         return memberRepository.save(requestDto.toEntity());
     }
 
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Member.LoginResponse authenticateByIdAndPassword(Member.LoginRequest requestDto) {
         Member member = memberRepository.findById(requestDto.getId())
             .orElseThrow(() -> new UsernameNotFoundException("등록되지 않은 아이디입니다."));

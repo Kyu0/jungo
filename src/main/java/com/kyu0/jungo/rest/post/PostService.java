@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kyu0.jungo.rest.category.Category;
@@ -40,21 +41,23 @@ public class PostService {
         return postRepository.save(requestDto.toEntity(member, category)).getId();
     }
 
+    @Transactional
     public Post modify(@Valid ModifyRequest requestDto) throws EntityNotFoundException, AccessDeniedException {
         Post post = postRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 게시글이 없습니다."));
         Category category = categoryRepository.findById(requestDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND));
 
-        if (!post.getMember().getId().equals(requestDto.getMemberId())) {
+        if (!isOwner(post, requestDto.getMemberId())) {
             throw new AccessDeniedException(MODIFY_NOT_ALLOWED);
         }
 
         return postRepository.save(requestDto.toEntity(post, category));
     }
 
+    @Transactional
     public boolean delete(@Valid DeleteRequest requestDto) throws EntityNotFoundException, AccessDeniedException {
         Post post = postRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
 
-        if (!post.getMember().getId().equals(requestDto.getMemberId())) {
+        if (!isOwner(post, requestDto.getMemberId())) {
             throw new AccessDeniedException(DELETE_NOT_ALLOWED);
         }
 
@@ -63,12 +66,17 @@ public class PostService {
         return !postRepository.existsById(requestDto.getId());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Post findById(Long id) {
         return postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Page<Post> findAll(Pageable pageable) {
         return postRepository.findAll(pageable);
+    }
+
+    private boolean isOwner(Post post, String memberId) {
+        return post.getMember().getId().equals(memberId);
     }
 }

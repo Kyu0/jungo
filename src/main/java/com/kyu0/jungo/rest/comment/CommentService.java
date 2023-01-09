@@ -1,6 +1,7 @@
 package com.kyu0.jungo.rest.comment;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
@@ -25,6 +26,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
+    @Transactional
     public Comment save(@Valid SaveRequest requestDto) throws EntityNotFoundException, ValidationException {
         Member member = memberRepository.findById(requestDto.getMemberId()).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 회원이 없습니다."));
         Post post = postRepository.findById(requestDto.getPostId()).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 게시글을 찾을 수 없습니다."));
@@ -32,6 +34,7 @@ public class CommentService {
         return commentRepository.save(requestDto.toEntity(member, post));
     }
 
+    @Transactional
     public Comment modify(@Valid ModifyRequest requestDto) throws EntityNotFoundException, ValidationException, AccessDeniedException {
         Comment comment = commentRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 댓글이 없습니다."));
 
@@ -48,6 +51,7 @@ public class CommentService {
             .build());
     }
 
+    @Transactional
     public boolean delete(DeleteRequest requestDto) throws EntityNotFoundException, ValidationException, AccessDeniedException {
         Comment comment = commentRepository.findById(requestDto.getId()).orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 댓글이 없습니다."));
 
