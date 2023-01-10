@@ -13,9 +13,9 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import com.kyu0.jungo.rest.BaseTimeEntity;
-import com.kyu0.jungo.rest.attach.Attach;
 import com.kyu0.jungo.rest.category.Category;
 import com.kyu0.jungo.rest.comment.Comment;
+import com.kyu0.jungo.rest.file.File;
 import com.kyu0.jungo.rest.member.Member;
 
 import lombok.*;
@@ -62,7 +62,7 @@ public class Post extends BaseTimeEntity {
 
     @OneToMany
     @Builder.Default
-    private List<Attach> attaches = new ArrayList<>();
+    private List<File> attaches = new ArrayList<>();
 
     public void setMember(Member member) {
         this.member = member;
@@ -88,7 +88,7 @@ public class Post extends BaseTimeEntity {
         }
     }
 
-    public void addAttach(Attach attach) {
+    public void addAttach(File attach) {
         this.attaches.add(attach);
 
         if (attach.getPost() != this) {
