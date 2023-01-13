@@ -1,9 +1,13 @@
-package com.kyu0.jungo.rest.file;
+package com.kyu0.jungo.rest.attachment;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotBlank;
 
+import lombok.*;
+
+@NoArgsConstructor
+@AllArgsConstructor
 @Embeddable
 public class FileName {
 

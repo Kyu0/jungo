@@ -8,6 +8,7 @@ build/
 ### Properties ###
 db.properties
 security.properties
+file.properties
 
 ### STS ###
 .apt_generated
