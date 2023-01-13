@@ -5,6 +5,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### 기타 디렉토리 ###
+files/**
+
 ### Properties ###
 db.properties
 security.properties
