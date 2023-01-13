@@ -22,8 +22,4 @@ public class FileName {
     @NotBlank
     @Column(name = "SAVED_PATH")
     private String savedPath;
-
-    public String getExtensionName() {
-        return this.savedName.substring(this.savedName.lastIndexOf('.') + 1);
-    }
 }
