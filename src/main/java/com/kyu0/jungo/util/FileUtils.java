@@ -1,5 +1,7 @@
 package com.kyu0.jungo.util;
 
+import java.io.File;
+
 public class FileUtils {
     
     /**

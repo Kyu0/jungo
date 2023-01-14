@@ -1,5 +1,6 @@
 package com.kyu0.jungo.rest.attachment;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -57,7 +58,10 @@ public class Attachment {
         @NotEmpty
         private List<MultipartFile> attachments;
 
-        @NotBlank
-        private String savedPath;
+        @NotEmpty
+        private List<File> uploadedFiles;
+
+        @Min(1)
+        private int size;
     }
 }
