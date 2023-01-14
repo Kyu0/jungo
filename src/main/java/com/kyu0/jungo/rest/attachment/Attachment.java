@@ -59,11 +59,5 @@ public class Attachment {
 
         @NotBlank
         private String savedPath;
-
-        public SaveRequest(Long postId, MultipartFile[] attachments, String savedPath) {
-            this.postId = postId;
-            this.attachments = Stream.of(attachments).collect(Collectors.toList());
-            this.savedPath = savedPath;
-        }
     }
 }

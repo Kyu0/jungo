@@ -29,7 +29,7 @@ public class AttachmentService {
     private final AttachmentRepository attachmentRepository;
     private final PostRepository postRepository;
 
-    @Transactional(rollbackFor = {EntityNotFoundException.class, FileAlreadyExistsException.class, IOException.class})
+    @Transactional(rollbackFor = {EntityNotFoundException.class, FileAlreadyExistsException.class, IOException.class, SecurityException.class})
     public List<Long> save(@Valid SaveRequest requestDto) throws EntityNotFoundException, IllegalStateException, IOException {
         List<Long> savedFileList = new ArrayList<>();
 
@@ -40,9 +40,9 @@ public class AttachmentService {
             Post post = postRepository.findById(requestDto.getPostId()).orElseThrow(() -> new EntityNotFoundException("해당 게시물을 찾을 수 없습니다."));
 
             Attachment entity = Attachment.builder()
-            .fileName(new FileName(attachment.getOriginalFilename(), tempFile.getName(), requestDto.getSavedPath()))
-            .post(post)
-            .size(attachment.getSize())
+                .fileName(new FileName(attachment.getOriginalFilename(), tempFile.getName(), requestDto.getSavedPath()))
+                .post(post)
+                .size(attachment.getSize())
             .build();
             
             savedFileList.add(attachmentRepository.save(entity).getId());
@@ -51,7 +51,7 @@ public class AttachmentService {
         return savedFileList;
     }
 
-    private File getSavedFileName(String savedPath, String extensionName) throws IOException {
+    private File getSavedFileName(String savedPath, String extensionName) throws SecurityException, IOException {
         File folder = new File(savedPath);
         if (!folder.isDirectory()) {
             folder.mkdirs();
