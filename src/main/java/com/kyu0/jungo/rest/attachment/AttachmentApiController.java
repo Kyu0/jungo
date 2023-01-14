@@ -30,7 +30,6 @@ public class AttachmentApiController {
     @PostMapping("/api/attachments/{postId}")
     public ApiResult<?> save(@RequestParam("attachments") List<MultipartFile> attachments, @PathVariable("postId") Long postId) {
         try {
-            // Upload Files
             List<File> uploadedFiles = fileUploadService.uploadFiles(attachments);
             SaveRequest requestDto = new SaveRequest(postId, attachments, uploadedFiles, attachments.size());
             
