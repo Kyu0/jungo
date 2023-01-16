@@ -4,20 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import java.util.*;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,38 +24,37 @@ public class FileUploadService {
     @Value("${upload.location}")
     private String SAVED_PATH;
 
-    private final ExecutorService executorService;
+    private final Executor executor;
 
     public List<File> uploadFiles(List<MultipartFile> files) {
-        List<Future<File>> tempResult = new ArrayList<>();
         List<File> result = new ArrayList<>();
 
-        log.info("Executor Service : {}", executorService.toString());
-        files.forEach(file -> tempResult.add(executorService.submit(() -> uploadFile(file))));
+        files.forEach(file -> result.add(uploadFile(file)));
         
-        for (Future<File> temp : tempResult) {
-            try {
-                result.add(temp.get());
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("쓰레드의 결과를 받아오는 도중 오류가 발생했습니다. 오류가 발생한 메소드 : uploadFiles()\n{}", e.getMessage());
-                result.add(null);
-            }
-        }
-
-        executorService.shutdown();
         return result;
     }
 
     public File uploadFile(MultipartFile file) {
         try {
             File tempFile = getTempFile(file);
-            file.transferTo(Path.of(tempFile.getAbsolutePath()));
+            executor.execute(transferFile(file, tempFile));
             return tempFile;
         }
-        catch (IllegalStateException | IOException e) {
+        catch (IOException e) {
             log.error("파일을 업로드하는 도중 오류가 발생했습니다. 파일명 : {}\n{}", file.getOriginalFilename(), e.getMessage());
             return null;
         }
+    }
+
+    private Runnable transferFile(MultipartFile origin, File copy){
+        return () -> {
+            try {
+                log.info("Thread Name : {}", Thread.currentThread().getName());
+                origin.transferTo(Path.of(copy.getAbsolutePath()));
+            } catch (IllegalStateException | IOException e) {
+                log.error("파일을 업로드하는 도중 오류가 발생했습니다.\n{}", e.getMessage());
+            }
+        };
     }
 
     private File getTempFile(MultipartFile file) throws IOException {
