@@ -11,9 +11,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Configuration
 public class AsyncConfig {
 
-    private static int CORE_POOL_SIZE = 8;
-    private static int MAX_POOL_SIZE = 16;
-    private static int QUEUE_CAPACITY = 16;
+    private static int CORE_POOL_SIZE = 16;
+    private static int MAX_POOL_SIZE = 32;
+    private static int QUEUE_CAPACITY = 32;
     private static String THREAD_NAME_PREFIX = "async-task_";
 
     @Bean
