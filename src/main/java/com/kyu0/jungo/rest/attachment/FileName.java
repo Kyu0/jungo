@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 
 import lombok.*;
 
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable

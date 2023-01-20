@@ -64,4 +64,21 @@ public class Attachment {
         @Min(1)
         private int size;
     }
+
+    @Getter
+    @Setter
+    public static class FindResponse {
+        
+        private Long id;
+        private Long postId;
+        private String savedPath;
+        private long fileSize;
+
+        public FindResponse(Attachment entity) {
+            this.id = entity.getId();
+            this.postId = entity.getPost().getId();
+            this.savedPath = entity.getFileName().getSavedPath();
+            this.fileSize = entity.getSize();
+        }
+    }
 }
