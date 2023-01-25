@@ -1,14 +1,10 @@
 package com.kyu0.jungo.util;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -33,7 +29,8 @@ public class FileUploadService {
         List<Future<File>> result = new ArrayList<>();
 
         files.forEach(file -> result.add(executorService.submit(() -> uploadFile(file))));
-        
+        executorService.shutdown();
+
         return result;
     }
 
