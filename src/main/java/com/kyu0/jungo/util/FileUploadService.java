@@ -36,7 +36,7 @@ public class FileUploadService {
 
     public File uploadFile(MultipartFile file) {
         try {
-            File tempFile = getTempFile(file);
+            File tempFile = getTempFile();
             executor.execute(transferFile(file, tempFile));
             return tempFile;
         }
@@ -57,7 +57,7 @@ public class FileUploadService {
         };
     }
 
-    private File getTempFile(MultipartFile file) throws IOException {
+    private File getTempFile() throws IOException {
         File folder = new File(getDailySavedPath());
         if (!folder.isDirectory()) {
             folder.mkdirs();
