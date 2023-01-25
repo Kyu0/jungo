@@ -1,8 +1,10 @@
 package com.kyu0.jungo.rest.attachment;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
@@ -30,14 +32,26 @@ public class AttachmentApiController {
     @ExecutionTimeLog
     @PostMapping("/api/attachments/{postId}")
     public ApiResult<?> save(@RequestParam("attachments") List<MultipartFile> attachments, @PathVariable("postId") Long postId) {
+        List<File> uploadedFiles = new ArrayList<>();
+
         try {
-            List<File> uploadedFiles = fileUploadService.uploadFiles(attachments);
+            for (File file : fileUploadService.uploadFiles(attachments)) {
+                uploadedFiles.add(file);
+            }
             SaveRequest requestDto = new SaveRequest(postId, attachments, uploadedFiles, attachments.size());
             
-            return ApiUtils.success(attachmentService.save(requestDto));
+            List<Long> savedFileIds = attachmentService.save(requestDto);
+            SaveResponse responseDto = new SaveResponse(attachments.size(), (int)uploadedFiles.stream().filter(file -> file != null).count() , savedFileIds);
+
+            return ApiUtils.success(responseDto);
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (EntityNotFoundException e) {
+            for (File uploadedFile : uploadedFiles) {
+                if (uploadedFile != null && uploadedFile.exists()) {
+                    uploadedFile.delete();
+                }
+            }
+            log.error(e.getMessage());
             return ApiUtils.error(e, HttpStatus.BAD_REQUEST);
         }
     }
