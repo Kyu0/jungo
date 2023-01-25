@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kyu0.jungo.rest.attachment.Attachment.SaveRequest;
 import com.kyu0.jungo.rest.post.Post;
 import com.kyu0.jungo.rest.post.PostRepository;
+import com.kyu0.jungo.util.FileUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -43,7 +44,12 @@ public class AttachmentService {
             Attachment entity = Attachment.builder()
                 .post(post)
                 .size(origin.getSize())
-                .fileName(new FileName(origin.getOriginalFilename(), copy.getName(), copy.getPath()))
+                .fileName(FileName.builder()
+                    .originalName(origin.getOriginalFilename())
+                    .savedPath(FileUtils.getPathWithoutFileName(copy.getPath()))
+                    .savedName(copy.getName())
+                    .extensionName(FileUtils.getExtensionName(origin.getOriginalFilename()))
+                .build())
             .build();
 
             result.add(attachmentRepository.save(entity).getId());

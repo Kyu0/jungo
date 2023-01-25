@@ -7,8 +7,9 @@ import javax.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Embeddable
 public class FileName {
 
@@ -23,4 +24,15 @@ public class FileName {
     @NotBlank
     @Column(name = "SAVED_PATH")
     private String savedPath;
+
+    @NotBlank
+    @Column(name = "EXTENSION_NAME", columnDefinition = "CHAR(8)")
+    private String extensionName;
+
+    public String getPathWithFileName() {
+        return new StringBuilder()
+            .append(savedPath)
+            .append(savedName)
+        .toString();
+    }
 }

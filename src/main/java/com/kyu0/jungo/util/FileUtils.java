@@ -8,6 +8,8 @@ import org.springframework.http.*;
 
 import com.kyu0.jungo.rest.attachment.Attachment;
 
+import lombok.extern.log4j.Log4j2;
+
 public class FileUtils {
     
     /**
@@ -21,6 +23,17 @@ public class FileUtils {
     }
 
     /**
+     * 전달받은 파일 이름에서, 확장자명을 제외한 문자열을 반환한다.
+     */
+    public static String getFileNameWithoutExtension(String fileName) {
+        return fileName.substring(0, fileName.lastIndexOf('.'));
+    }
+
+    public static String getPathWithoutFileName(String path) {
+        return path.substring(0, path.lastIndexOf('/') + 1);
+    }
+
+    /**
      * 파일을 다운로드할 수 있는 ResponseEntity를 반환한다.
      * 
      * @param attachment
@@ -28,7 +41,10 @@ public class FileUtils {
      * @throws IOException
      */
     public static ResponseEntity<?> downloadFile(Attachment attachment) throws IOException {
-        return downloadFile(new File(attachment.getFileName().getSavedPath()), attachment.getFileName().getOriginalName());
+        File savedFile = new File(attachment.getFileName().getPathWithFileName());
+        String originalName = attachment.getFileName().getOriginalName();
+
+        return downloadFile(savedFile, originalName);
     }
 
     /**

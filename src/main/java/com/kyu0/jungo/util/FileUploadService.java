@@ -63,13 +63,10 @@ public class FileUploadService {
             folder.mkdirs();
         }
 
-        String extensionName = FileUtils.getExtensionName(file.getOriginalFilename());
-
         File tempFile = new File(
             new StringBuilder(getDailySavedPath())
                 .append('/')
                 .append(UUID.randomUUID())
-                .append(extensionName)
             .toString()
         );
 
@@ -78,7 +75,6 @@ public class FileUploadService {
                 new StringBuilder(getDailySavedPath())
                     .append('/')
                     .append(UUID.randomUUID())
-                    .append(extensionName)
                 .toString()
             );
         }

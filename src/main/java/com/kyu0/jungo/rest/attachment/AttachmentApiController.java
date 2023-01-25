@@ -59,13 +59,10 @@ public class AttachmentApiController {
     @GetMapping("/api/attachments/download/{id}")
     public ResponseEntity<?> download(HttpServletResponse response, @PathVariable Long id) {
         try {
-            log.info("얍");
             Attachment attachment = attachmentService.findById(id);
-            log.info("File Name : {}", attachment.getFileName().getSavedPath());
             return FileUtils.downloadFile(attachment);
         }
         catch (Exception e) {
-            log.info("흡");
             e.printStackTrace();
             return FileUtils.downloadFileFailed();
         }
