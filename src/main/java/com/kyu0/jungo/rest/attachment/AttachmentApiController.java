@@ -3,6 +3,8 @@ package com.kyu0.jungo.rest.attachment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
@@ -31,18 +33,18 @@ public class AttachmentApiController {
     @LoginCheck
     @ExecutionTimeLog
     @PostMapping("/api/attachments/{postId}")
-    public ApiResult<?> save(@RequestParam("attachments") List<MultipartFile> attachments, @PathVariable("postId") Long postId) {
+    public ApiResult<?> save(@RequestParam("attachments") List<MultipartFile> attachments, @PathVariable("postId") Long postId) throws InterruptedException, ExecutionException {
         List<File> uploadedFiles = new ArrayList<>();
 
         try {
-            for (File file : fileUploadService.uploadFiles(attachments)) {
-                uploadedFiles.add(file);
+            for (Future<File> file : fileUploadService.uploadFiles(attachments)) {
+                uploadedFiles.add(file.get());
             }
             SaveRequest requestDto = new SaveRequest(postId, attachments, uploadedFiles, attachments.size());
             
             List<Long> savedFileIds = attachmentService.save(requestDto);
             SaveResponse responseDto = new SaveResponse(attachments.size(), (int)uploadedFiles.stream().filter(file -> file != null).count() , savedFileIds);
-
+            log.info("response : {}, {}, {}", responseDto.getRequestCount(), responseDto.getResponseCount(), responseDto.getSavedFileIds());
             return ApiUtils.success(responseDto);
         }
         catch (EntityNotFoundException e) {

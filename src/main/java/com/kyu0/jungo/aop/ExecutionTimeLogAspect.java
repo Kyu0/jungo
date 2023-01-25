@@ -16,10 +16,12 @@ import lombok.extern.log4j.Log4j2;
 public class ExecutionTimeLogAspect {
     
     @Around("@annotation(com.kyu0.jungo.aop.ExecutionTimeLog)")
-    public void executionTimeLog(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object executionTimeLog(ProceedingJoinPoint joinPoint) throws Throwable {
         Instant start = Instant.now();
-        joinPoint.proceed();
+        Object result = joinPoint.proceed();
         Instant end = Instant.now();
         log.info("Execution Time : {}ms", Duration.between(start, end).toMillis());
+        
+        return result;
     }
 }

@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -24,37 +27,24 @@ public class FileUploadService {
     @Value("${upload.location}")
     private String SAVED_PATH;
 
-    private final Executor executor;
+    private final ExecutorService executorService;
 
-    public List<File> uploadFiles(List<MultipartFile> files) {
-        List<File> result = new ArrayList<>();
+    public List<Future<File>> uploadFiles(List<MultipartFile> files) {
+        List<Future<File>> result = new ArrayList<>();
 
-        files.forEach(file -> result.add(uploadFile(file)));
+        files.forEach(file -> result.add(executorService.submit(() -> uploadFile(file))));
         
         return result;
     }
 
-    public File uploadFile(MultipartFile file) {
-        try {
-            File tempFile = getTempFile();
-            executor.execute(transferFile(file, tempFile));
-            return tempFile;
-        }
-        catch (IOException e) {
-            log.error("파일을 업로드하는 도중 오류가 발생했습니다. 파일명 : {}\n{}", file.getOriginalFilename(), e.getMessage());
-            return null;
-        }
-    }
-
-    private Runnable transferFile(MultipartFile origin, File copy){
-        return () -> {
-            try {
-                log.info("Thread Name : {}", Thread.currentThread().getName());
-                origin.transferTo(Path.of(copy.getAbsolutePath()));
-            } catch (IllegalStateException | IOException e) {
-                log.error("파일을 업로드하는 도중 오류가 발생했습니다.\n{}", e.getMessage());
-            }
-        };
+    public File uploadFile(MultipartFile file) throws IOException {
+        log.info("Thread Name : {}", Thread.currentThread().getName());
+        log.info("Uploading : {}", file.getOriginalFilename());
+        File copy = getTempFile();
+        file.transferTo(Path.of(copy.getAbsolutePath()));
+        log.info("Uploaded : {}", file.getOriginalFilename());
+        
+        return copy;
     }
 
     private File getTempFile() throws IOException {
