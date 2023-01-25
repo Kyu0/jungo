@@ -13,23 +13,23 @@ import lombok.*;
 @Embeddable
 public class FileName {
 
-    @NotBlank
-    @Column(name = "ORIGINAL_NAME")
+    @NotBlank(message = "원본 파일을 입력해주세요.")
+    @Column(name = "ORIGINAL_NAME", nullable = false)
     private String originalName;
 
-    @NotBlank
-    @Column(name = "SAVED_NAME")
+    @NotBlank(message = "업로드된 파일명을 입력해주세요.")
+    @Column(name = "SAVED_NAME", nullable = false)
     private String savedName;
 
-    @NotBlank
-    @Column(name = "SAVED_PATH")
+    @NotBlank(message = "업로드된 파일의 경로를 입력해주세요.")
+    @Column(name = "SAVED_PATH", nullable = false)
     private String savedPath;
 
-    @NotBlank
-    @Column(name = "EXTENSION_NAME", columnDefinition = "CHAR(8)")
+    @NotBlank(message = "파일의 확장자명을 입력해주세요.")
+    @Column(name = "EXTENSION_NAME", columnDefinition = "CHAR(8)", nullable = false)
     private String extensionName;
 
-    public String getPathWithFileName() {
+    public String getSavedPathWithFileName() {
         return new StringBuilder()
             .append(savedPath)
             .append(savedName)

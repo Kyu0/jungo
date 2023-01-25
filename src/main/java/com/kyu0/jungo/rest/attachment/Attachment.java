@@ -65,6 +65,15 @@ public class Attachment {
 
     @Getter
     @Setter
+    @AllArgsConstructor
+    public static class SaveResponse {
+        private int requestCount;
+        private int responseCount;
+        private List<Long> savedFileIds;
+    }
+
+    @Getter
+    @Setter
     public static class FindResponse {
         
         private Long id;

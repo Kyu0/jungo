@@ -41,7 +41,7 @@ public class FileUtils {
      * @throws IOException
      */
     public static ResponseEntity<?> downloadFile(Attachment attachment) throws IOException {
-        File savedFile = new File(attachment.getFileName().getPathWithFileName());
+        File savedFile = new File(attachment.getFileName().getSavedPathWithFileName());
         String originalName = attachment.getFileName().getOriginalName();
 
         return downloadFile(savedFile, originalName);
