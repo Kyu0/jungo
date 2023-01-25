@@ -1,9 +1,6 @@
 package com.kyu0.jungo.rest.attachment;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.util.*;
 
 import javax.persistence.EntityNotFoundException;

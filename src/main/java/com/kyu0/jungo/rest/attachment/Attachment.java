@@ -2,8 +2,6 @@ package com.kyu0.jungo.rest.attachment;
 
 import java.io.File;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
