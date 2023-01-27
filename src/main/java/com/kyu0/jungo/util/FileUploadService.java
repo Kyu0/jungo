@@ -29,7 +29,6 @@ public class FileUploadService {
         List<Future<File>> result = new ArrayList<>();
 
         files.forEach(file -> result.add(executorService.submit(() -> uploadFile(file))));
-        executorService.shutdown();
 
         return result;
     }
